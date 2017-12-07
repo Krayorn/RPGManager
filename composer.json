@@ -1,8 +1,9 @@
 {
+	"name": "rpgmanager/rpgmanager",
 	"require": {
 		"doctrine/orm": "2.5.*"
 	},
 	"autoload": {
-		"psr-0": {"": "src/"}
+		"psr-0": {"RPGManager": "src/"}
 	}
 }
