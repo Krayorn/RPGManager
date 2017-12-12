@@ -1,5 +1,7 @@
 <?php
 
+namespace RPGManager\Entity;
+
 /**
  * @Entity @Table(name="place")
  **/
