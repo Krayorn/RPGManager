@@ -62,46 +62,58 @@ class Game extends Template
         $this->writeAccessLog("executePlayerAction()");
 
         $this->currentPlayer = trim($args[0]);
+
+        $this->isArgValid($availableActions, $args);
+
         foreach ($availableActions as $value) {
-            if ($this->isValidAction(trim($args[1]), $value)) {
+            if ($this->isValidAction($value, $args)) {
 
                 $this->writeActionLog($this->currentPlayer . " " . trim($args[1]) . " " . trim($args[2]));
+                $this->writeAccessLog($value . "Action");
 
                 call_user_func([$this, $value . "Action"]);
             }
         }
     }
 
-    private function isValidAction($userAction, $actionName)
+    private function isArgValid($availableActions, $args)
     {
-        if (strtolower($userAction) === strtolower($actionName) || $userAction === substr($actionName, 0, 1)) {
-            if (call_user_func([$this, strtolower($userAction) . "ActionCheck"])) {
+        if (!in_array(trim($args[1]), $availableActions)) {
+            echo "COMMAND NOT VALID";
+        }
+        return true;
+    }
+
+    private function isValidAction($actionName, $args)
+    {
+        if (strtolower(trim($args[1])) === strtolower($actionName) || trim($args[1])  === substr($actionName, 0, 1)) {
+            if (call_user_func([$this, strtolower(trim($args[1])) . "ActionCheck"], $args)) {
+                $this->writeAccessLog(strtolower(trim($args[1])) . "ActionCheck");
                 return true;
             }
         }
         return false;
     }
 
-    private function takeActionCheck()
+    private function takeActionCheck($args)
     {
-        $this->writeAccessLog("takeActionCheck()");
-
+        if (!isset($args[2]) || trim($args[2]) == '') {
+            echo "ARGS MISSING";
+        }
         echo "IN TAKE ACTION CHECK";
-
         return true;
     }
 
     private function takeAction()
     {
-        $this->writeAccessLog("takeAction()");
-
         echo "IN TAKE ACTION \n";
     }
 
     private function moveActionCheck()
     {
-        $this->writeAccessLog("moveActionCheck()");
-
+        if (!isset($args[2]) || trim($args[2]) == '') {
+            echo "ARGS MISSING";
+        }
         echo "IN MOVE ACTION CHECK";
 
         return true;
@@ -109,15 +121,11 @@ class Game extends Template
 
     private function moveAction()
     {
-        $this->writeAccessLog("moveAction()");
-
         echo "IN MOVE ACTION \n";
     }
 
     private function inventoryActionCheck()
     {
-        $this->writeAccessLog("inventoryActionCheck()");
-
         echo "IN INVENTORY ACTION CHECK";
 
         return true;
@@ -125,15 +133,14 @@ class Game extends Template
 
     private function inventoryAction()
     {
-        $this->writeAccessLog("takeAction()");
-
         echo "IN INVENTORY ACTION \n";
     }
 
     private function attackActionCheck()
     {
-        $this->writeAccessLog("attackActionCheck()");
-
+        if (!isset($args[2]) || trim($args[2]) == '') {
+            echo "ARGS MISSING";
+        }
         echo "IN ATTACK ACTION CHECK";
 
         return true;
@@ -141,8 +148,6 @@ class Game extends Template
 
     private function attackAction()
     {
-        $this->writeAccessLog("attackAction()");
-
         echo "IN ATTACK ACTION \n";
         $fight = new FightMode($this->currentPlayer, $this->getCharactersInArea(), $this->getFoesInArea());
         $fight->startFight();
