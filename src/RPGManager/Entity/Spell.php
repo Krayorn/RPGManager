@@ -1,9 +1,9 @@
 <?php
 
 /**
- * @Entity @Table(name="item")
+ * @Entity @Table(name="spell")
  **/
-class Item
+class Spell
 {
     /**
      * @var int
@@ -29,24 +29,26 @@ class Item
     private $description;
 
     /**
-     * @OneToMany(targetEntity="ItemStat", mappedBy="item", cascade={"persist"})
+     * @var \string
+     *
+     * @Column(name="type", type="string", length=255)
      */
-    private $itemstats;
+    private $type;
 
     /**
-     * @OneToMany(targetEntity="ItemLocation", mappedBy="item", cascade={"persist"})
+     * @OneToMany(targetEntity="SpellStat", mappedBy="spell", cascade={"persist"})
      */
-    private $itemlocations;
+    private $spellstats;
 
     /**
-     * @OneToMany(targetEntity="CharacterInventory", mappedBy="item", cascade={"persist"})
+     * @OneToMany(targetEntity="CharacterSpell", mappedBy="spell", cascade={"persist"})
      */
-    private $characterinventories;
+    private $characterspells;
 
     /**
-     * @OneToMany(targetEntity="MonsterInventory", mappedBy="item", cascade={"persist"})
+     * @OneToMany(targetEntity="MonsterSpell", mappedBy="spell", cascade={"persist"})
      */
-    private $monsterinventories;
+    private $monsterspells;
 
     /**
      * @return int
@@ -97,67 +99,67 @@ class Item
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getItemstats()
+    public function getType()
     {
-        return $this->itemstats;
+        return $this->type;
     }
 
     /**
-     * @param mixed $itemstats
+     * @param string $type
      */
-    public function setItemstats($itemstats)
+    public function setType($type)
     {
-        $this->itemstats = $itemstats;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getItemlocations()
-    {
-        return $this->itemlocations;
-    }
-
-    /**
-     * @param mixed $itemlocations
-     */
-    public function setItemlocations($itemlocations)
-    {
-        $this->itemlocations = $itemlocations;
+        $this->type = $type;
     }
 
     /**
      * @return mixed
      */
-    public function getCharacterinventories()
+    public function getSpellstats()
     {
-        return $this->characterinventories;
+        return $this->spellstats;
     }
 
     /**
-     * @param mixed $characterinventories
+     * @param mixed $spellstats
      */
-    public function setCharacterinventories($characterinventories)
+    public function setSpellstats($spellstats)
     {
-        $this->characterinventories = $characterinventories;
+        $this->spellstats = $spellstats;
     }
 
     /**
      * @return mixed
      */
-    public function getMonsterinventories()
+    public function getCharacterspells()
     {
-        return $this->monsterinventories;
+        return $this->characterspells;
     }
 
     /**
-     * @param mixed $monsterinventories
+     * @param mixed $characterspells
      */
-    public function setMonsterinventories($monsterinventories)
+    public function setCharacterspells($characterspells)
     {
-        $this->monsterinventories = $monsterinventories;
+        $this->characterspells = $characterspells;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMonsterspells()
+    {
+        return $this->monsterspells;
+    }
+
+    /**
+     * @param mixed $monsterspells
+     */
+    public function setMonsterspells($monsterspells)
+    {
+        $this->monsterspells = $monsterspells;
     }
 
 }

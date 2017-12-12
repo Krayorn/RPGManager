@@ -1,9 +1,9 @@
 <?php
 
 /**
- * @Entity @Table(name="item")
+ * @Entity @Table(name="monster")
  **/
-class Item
+class Monster
 {
     /**
      * @var int
@@ -29,24 +29,24 @@ class Item
     private $description;
 
     /**
-     * @OneToMany(targetEntity="ItemStat", mappedBy="item", cascade={"persist"})
-     */
-    private $itemstats;
-
-    /**
-     * @OneToMany(targetEntity="ItemLocation", mappedBy="item", cascade={"persist"})
-     */
-    private $itemlocations;
-
-    /**
-     * @OneToMany(targetEntity="CharacterInventory", mappedBy="item", cascade={"persist"})
-     */
-    private $characterinventories;
-
-    /**
-     * @OneToMany(targetEntity="MonsterInventory", mappedBy="item", cascade={"persist"})
+     * @OneToMany(targetEntity="MonsterInventory", mappedBy="monster", cascade={"persist"})
      */
     private $monsterinventories;
+
+    /**
+     * @OneToMany(targetEntity="MonsterStat", mappedBy="monster", cascade={"persist"})
+     */
+    private $monsterstats;
+
+    /**
+     * @OneToMany(targetEntity="MonsterSpell", mappedBy="monster", cascade={"persist"})
+     */
+    private $monsterspells;
+
+    /**
+     * @OneToMany(targetEntity="MonsterLocation", mappedBy="monster", cascade={"persist"})
+     */
+    private $monsterlocations;
 
     /**
      * @return int
@@ -99,54 +99,6 @@ class Item
     /**
      * @return mixed
      */
-    public function getItemstats()
-    {
-        return $this->itemstats;
-    }
-
-    /**
-     * @param mixed $itemstats
-     */
-    public function setItemstats($itemstats)
-    {
-        $this->itemstats = $itemstats;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getItemlocations()
-    {
-        return $this->itemlocations;
-    }
-
-    /**
-     * @param mixed $itemlocations
-     */
-    public function setItemlocations($itemlocations)
-    {
-        $this->itemlocations = $itemlocations;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCharacterinventories()
-    {
-        return $this->characterinventories;
-    }
-
-    /**
-     * @param mixed $characterinventories
-     */
-    public function setCharacterinventories($characterinventories)
-    {
-        $this->characterinventories = $characterinventories;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getMonsterinventories()
     {
         return $this->monsterinventories;
@@ -158,6 +110,54 @@ class Item
     public function setMonsterinventories($monsterinventories)
     {
         $this->monsterinventories = $monsterinventories;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMonsterstats()
+    {
+        return $this->monsterstats;
+    }
+
+    /**
+     * @param mixed $monsterstats
+     */
+    public function setMonsterstats($monsterstats)
+    {
+        $this->monsterstats = $monsterstats;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMonsterspells()
+    {
+        return $this->monsterspells;
+    }
+
+    /**
+     * @param mixed $monsterspells
+     */
+    public function setMonsterspells($monsterspells)
+    {
+        $this->monsterspells = $monsterspells;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMonsterlocations()
+    {
+        return $this->monsterlocations;
+    }
+
+    /**
+     * @param mixed $monsterlocations
+     */
+    public function setMonsterlocations($monsterlocations)
+    {
+        $this->monsterlocations = $monsterlocations;
     }
 
 }

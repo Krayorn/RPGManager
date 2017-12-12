@@ -1,9 +1,9 @@
 <?php
 
 /**
- * @Entity @Table(name="item")
+ * @Entity @Table(name="place")
  **/
-class Item
+class Place
 {
     /**
      * @var int
@@ -29,24 +29,24 @@ class Item
     private $description;
 
     /**
-     * @OneToMany(targetEntity="ItemStat", mappedBy="item", cascade={"persist"})
+     * @OneToMany(targetEntity="Direction", mappedBy="place", cascade={"persist"})
      */
-    private $itemstats;
+    private $directions;
 
     /**
-     * @OneToMany(targetEntity="ItemLocation", mappedBy="item", cascade={"persist"})
+     * @OneToMany(targetEntity="MonsterLocation", mappedBy="place", cascade={"persist"})
+     */
+    private $monsterlocations;
+
+    /**
+     * @OneToMany(targetEntity="ItemLocation", mappedBy="place", cascade={"persist"})
      */
     private $itemlocations;
 
     /**
-     * @OneToMany(targetEntity="CharacterInventory", mappedBy="item", cascade={"persist"})
+     * @OneToMany(targetEntity="Npc", mappedBy="place", cascade={"persist"})
      */
-    private $characterinventories;
-
-    /**
-     * @OneToMany(targetEntity="MonsterInventory", mappedBy="item", cascade={"persist"})
-     */
-    private $monsterinventories;
+    private $npcs;
 
     /**
      * @return int
@@ -99,17 +99,33 @@ class Item
     /**
      * @return mixed
      */
-    public function getItemstats()
+    public function getDirections()
     {
-        return $this->itemstats;
+        return $this->directions;
     }
 
     /**
-     * @param mixed $itemstats
+     * @param mixed $directions
      */
-    public function setItemstats($itemstats)
+    public function setDirections($directions)
     {
-        $this->itemstats = $itemstats;
+        $this->directions = $directions;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMonsterlocations()
+    {
+        return $this->monsterlocations;
+    }
+
+    /**
+     * @param mixed $monsterlocations
+     */
+    public function setMonsterlocations($monsterlocations)
+    {
+        $this->monsterlocations = $monsterlocations;
     }
 
     /**
@@ -131,33 +147,17 @@ class Item
     /**
      * @return mixed
      */
-    public function getCharacterinventories()
+    public function getNpcs()
     {
-        return $this->characterinventories;
+        return $this->npcs;
     }
 
     /**
-     * @param mixed $characterinventories
+     * @param mixed $npcs
      */
-    public function setCharacterinventories($characterinventories)
+    public function setNpcs($npcs)
     {
-        $this->characterinventories = $characterinventories;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMonsterinventories()
-    {
-        return $this->monsterinventories;
-    }
-
-    /**
-     * @param mixed $monsterinventories
-     */
-    public function setMonsterinventories($monsterinventories)
-    {
-        $this->monsterinventories = $monsterinventories;
+        $this->npcs = $npcs;
     }
 
 }

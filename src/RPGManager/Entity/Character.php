@@ -1,9 +1,9 @@
 <?php
 
 /**
- * @Entity @Table(name="item")
+ * @Entity @Table(name="character")
  **/
-class Item
+class Character
 {
     /**
      * @var int
@@ -29,24 +29,26 @@ class Item
     private $description;
 
     /**
-     * @OneToMany(targetEntity="ItemStat", mappedBy="item", cascade={"persist"})
-     */
-    private $itemstats;
-
-    /**
-     * @OneToMany(targetEntity="ItemLocation", mappedBy="item", cascade={"persist"})
-     */
-    private $itemlocations;
-
-    /**
-     * @OneToMany(targetEntity="CharacterInventory", mappedBy="item", cascade={"persist"})
+     * @OneToMany(targetEntity="CharacterInventory", mappedBy="character", cascade={"persist"})
      */
     private $characterinventories;
 
     /**
-     * @OneToMany(targetEntity="MonsterInventory", mappedBy="item", cascade={"persist"})
+     * @OneToMany(targetEntity="CharacterStat", mappedBy="character", cascade={"persist"})
      */
-    private $monsterinventories;
+    private $characterstats;
+
+    /**
+     * @OneToMany(targetEntity="CharacterSpell", mappedBy="character", cascade={"persist"})
+     */
+    private $characterspells;
+
+    /**
+     * @var \int
+     *
+     * @Column(name="location", type="integer")
+     */
+    private $location;
 
     /**
      * @return int
@@ -99,38 +101,6 @@ class Item
     /**
      * @return mixed
      */
-    public function getItemstats()
-    {
-        return $this->itemstats;
-    }
-
-    /**
-     * @param mixed $itemstats
-     */
-    public function setItemstats($itemstats)
-    {
-        $this->itemstats = $itemstats;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getItemlocations()
-    {
-        return $this->itemlocations;
-    }
-
-    /**
-     * @param mixed $itemlocations
-     */
-    public function setItemlocations($itemlocations)
-    {
-        $this->itemlocations = $itemlocations;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getCharacterinventories()
     {
         return $this->characterinventories;
@@ -147,17 +117,49 @@ class Item
     /**
      * @return mixed
      */
-    public function getMonsterinventories()
+    public function getCharacterstats()
     {
-        return $this->monsterinventories;
+        return $this->characterstats;
     }
 
     /**
-     * @param mixed $monsterinventories
+     * @param mixed $characterstats
      */
-    public function setMonsterinventories($monsterinventories)
+    public function setCharacterstats($characterstats)
     {
-        $this->monsterinventories = $monsterinventories;
+        $this->characterstats = $characterstats;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCharacterspells()
+    {
+        return $this->characterspells;
+    }
+
+    /**
+     * @param mixed $characterspells
+     */
+    public function setCharacterspells($characterspells)
+    {
+        $this->characterspells = $characterspells;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    /**
+     * @param int $location
+     */
+    public function setLocation($location)
+    {
+        $this->location = $location;
     }
 
 }
