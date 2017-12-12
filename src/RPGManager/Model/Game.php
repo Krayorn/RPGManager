@@ -23,8 +23,7 @@ class Game extends Template
     {
         $game = Game::getInstance();
 
-        $line = "startGame()";
-        $game->writeAccessLog($line);
+        $game->writeAccessLog("startGame()");
 
         while (true) {
             $actions = $game->getAvailableActions();
@@ -43,8 +42,7 @@ class Game extends Template
 
     private function getAvailableActions()
     {
-        $line = "getAvailableActions()";
-        $this->writeAccessLog($line);
+        $this->writeAccessLog("getAvailableActions()");
 
         $actions = $this->basicActions;
         if ($this->isSomeoneInArea()) {
@@ -61,15 +59,13 @@ class Game extends Template
 
     private function executePlayerAction($args, $availableActions)
     {
-        $line = "executePlayerAction()";
-        $this->writeAccessLog($line);
+        $this->writeAccessLog("executePlayerAction()");
 
         $this->currentPlayer = trim($args[0]);
         foreach ($availableActions as $value) {
             if ($this->isValidAction(trim($args[1]), $value)) {
 
-                $line = $this->currentPlayer . " " . trim($args[1]) . " " . trim($args[2]);
-                $this->writeActionLog($line);
+                $this->writeActionLog($this->currentPlayer . " " . trim($args[1]) . " " . trim($args[2]));
 
                 call_user_func([$this, $value . "Action"]);
             }
@@ -86,9 +82,9 @@ class Game extends Template
         return false;
     }
 
-    private function takeActionCheck() {
-        $line = "takeActionCheck()";
-        $this->writeAccessLog($line);
+    private function takeActionCheck()
+    {
+        $this->writeAccessLog("takeActionCheck()");
 
         echo "IN TAKE ACTION CHECK";
 
@@ -97,15 +93,14 @@ class Game extends Template
 
     private function takeAction()
     {
-        $line = "takeAction()";
-        $this->writeAccessLog($line);
+        $this->writeAccessLog("takeAction()");
 
         echo "IN TAKE ACTION \n";
     }
 
-    private function moveActionCheck() {
-        $line = "moveActionCheck()";
-        $this->writeAccessLog($line);
+    private function moveActionCheck()
+    {
+        $this->writeAccessLog("moveActionCheck()");
 
         echo "IN MOVE ACTION CHECK";
 
@@ -114,15 +109,14 @@ class Game extends Template
 
     private function moveAction()
     {
-        $line = "moveAction()";
-        $this->writeAccessLog($line);
+        $this->writeAccessLog("moveAction()");
 
         echo "IN MOVE ACTION \n";
     }
 
-    private function inventoryActionCheck() {
-        $line = "inventoryActionCheck()";
-        $this->writeAccessLog($line);
+    private function inventoryActionCheck()
+    {
+        $this->writeAccessLog("inventoryActionCheck()");
 
         echo "IN INVENTORY ACTION CHECK";
 
@@ -131,15 +125,14 @@ class Game extends Template
 
     private function inventoryAction()
     {
-        $line = "takeAction()";
-        $this->writeAccessLog($line);
+        $this->writeAccessLog("takeAction()");
 
         echo "IN INVENTORY ACTION \n";
     }
 
-    private function attackActionCheck() {
-        $line = "attackActionCheck()";
-        $this->writeAccessLog($line);
+    private function attackActionCheck()
+    {
+        $this->writeAccessLog("attackActionCheck()");
 
         echo "IN ATTACK ACTION CHECK";
 
@@ -148,8 +141,7 @@ class Game extends Template
 
     private function attackAction()
     {
-        $line = "attackAction()";
-        $this->writeAccessLog($line);
+        $this->writeAccessLog("attackAction()");
 
         echo "IN ATTACK ACTION \n";
         $fight = new FightMode($this->currentPlayer, $this->getCharactersInArea(), $this->getFoesInArea());

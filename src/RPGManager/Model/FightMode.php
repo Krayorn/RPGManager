@@ -21,9 +21,7 @@ class FightMode extends Template
     public function startFight()
     {
         // $initative = $this->setInitiative();
-
-        $line = "startFight()";
-        $this->writeAccessLog($line);
+        $this->writeAccessLog("startFight()");
 
         while (true) {
             $actions = $this->getAvailableFightActions();
@@ -49,22 +47,20 @@ class FightMode extends Template
 
     private function getAvailableFightActions()
     {
-        $line = "getAvailableFightActions()";
-        $this->writeAccessLog($line);
+        $this->writeAccessLog("getAvailableFightActions()");
 
         return $this->basicActions;
     }
 
     private function executeAttackerAction($args, $availableActions)
     {
-        $line = "executeAttackerAction()";
-        $this->writeAccessLog($line);
+        $this->writeAccessLog("executeAttackerAction()");
 
         foreach ($availableActions as $value) {
             if ($this->isValidAction(trim($args[0]), $value)) {
 
-                $line = $this->attacker . " " . trim($args[1]) . " " . trim($args[2]);
-                $this->writeActionLog($line);
+                $this->writeActionLog($this->attacker . " " . trim($args[1]) . " " . trim($args[2]));
+                $this->writeAccessLog($value . "Action");
 
                 call_user_func([$this, $value . "Action"]);
             }
@@ -75,33 +71,26 @@ class FightMode extends Template
     {
         if (strtolower($userAction) === strtolower($actionName) || $userAction === substr($actionName, 0, 1)) {
             if (call_user_func([$this, strtolower($userAction) . "ActionCheck"])) {
+                $this->writeAccessLog(strtolower($userAction) . "ActionCheck");
                 return true;
             }
         }
         return false;
     }
 
-    private function fleeActionCheck() {
-        $line = "fleeActionCheck()";
-        $this->writeAccessLog($line);
-
+    private function fleeActionCheck()
+    {
         echo "IN fleeAction CHECK \n";
-
         return true;
     }
 
     private function fleeAction()
     {
-        $line = "fleeAction()";
-        $this->writeAccessLog($line);
-
         echo "IN FLEE ACTION \n";
     }
 
-    private function skillsActionCheck() {
-        $line = "skillsActionCheck()";
-        $this->writeAccessLog($line);
-
+    private function skillsActionCheck()
+    {
         echo "IN skillsAction CHECK \n";
 
         return true;
@@ -109,16 +98,12 @@ class FightMode extends Template
 
     private function skillsAction()
     {
-        $line = "skillsAction()";
-        $this->writeAccessLog($line);
 
         echo "IN SKILLS ACTION \n";
     }
 
-    private function inventoryActionCheck() {
-        $line = "inventoryActionCheck()";
-        $this->writeAccessLog($line);
-
+    private function inventoryActionCheck()
+    {
         echo "IN inventoryAction CHECK \n";
 
         return true;
@@ -126,9 +111,6 @@ class FightMode extends Template
 
     private function inventoryAction()
     {
-        $line = "inventoryAction()";
-        $this->writeAccessLog($line);
-
         echo "IN INVENTORY ACTION \n";
     }
 
