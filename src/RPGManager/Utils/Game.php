@@ -6,7 +6,9 @@ use RPGManager\Template;
 
 class Game extends Template {
     private static $instance = null;
-    private $basicActions = ["Move", "Take", "Inventory"];
+    private $basicActions = ["move", "take", "inventory"];
+    private $currentPlayer;
+
 
     public static function getInstance() {
         if (self::$instance === null) {
@@ -22,19 +24,33 @@ class Game extends Template {
             foreach ($actions as $key => $value) {
                 echo $key . ") " . $value . "   ";
             }
-            $handle = fopen ("php://stdin","r");
+            $handle = fopen("php://stdin","r");
             $line = fgets($handle);
             $args = explode(" ", $line);
-            foreach ($actions as $key => $value) {
-                if(trim($args[0]) == $key || trim($args[0]) == $value) {
-                    call_user_func(array($game, $value . "Action"));
-                }
-            }
+            $game->executePlayerAction($args, $actions);
         }
     }
 
     private function getAvailableActions() {
         return $this->basicActions;
+    }
+
+    private function executePlayerAction($args, $availableActions) {
+        $this->currentPlayer = trim($args[0]);
+        foreach ($availableActions as $value) {
+            if ($this->isValidAction(trim($args[1]), $value)) {
+                call_user_func([$this, $value . "Action"]);
+            }
+        }
+    }
+
+    private function isValidAction($userAction, $actionName) {
+        return strtolower($userAction) === strtolower($actionName)
+            ? true
+            : $userAction === substr($actionName, 0, 1)
+                ? true
+                : false
+        ;
     }
 
     private function TakeAction() {
