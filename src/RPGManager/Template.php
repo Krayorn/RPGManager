@@ -12,7 +12,7 @@ abstract class Template
 
     protected function writeActionLogs($file, $text, $time = 0){
         $date = $this->getDate();
-        $line = $date . " || => " . $text . " || => " . number_format($time * 1000, 2) . " ms \n";
+        $line = $date . " => " . $text . "\n";
 
         $filename = 'logs/' . $file;
         if (!is_dir(dirname($filename)))
@@ -30,5 +30,14 @@ abstract class Template
 
     protected function writeErrorLog($log) {
         $this->writeActionLogs('error.log', $log);
+    }
+
+    protected function writeActionLog($log) {
+        $this->writeActionLogs('action.log', $log);
+    }
+
+    protected function writeRequestLog($log) {
+        $log .= " || => " . number_format($time * 1000, 2) . " ms";
+        $this->writeActionLogs('request.log', $log);
     }
 }

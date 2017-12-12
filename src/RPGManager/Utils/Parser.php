@@ -17,7 +17,7 @@ class Parser extends Template {
     public static function generateModelsDb($gameConfig, $settings) {
         $parser = Parser::getInstance();
 
-        $line = "generateModelsDb() => Parsing models";
+        $line = "generateModelsDb()";
         $parser->writeAccessLog($line);
 
         $items = $gameConfig["items"];
@@ -34,6 +34,6 @@ class Parser extends Template {
     }
 
     private function parseItems($items) {
-        
+
     }
 }
