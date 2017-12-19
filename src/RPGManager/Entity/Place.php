@@ -31,7 +31,7 @@ class Place
     private $description;
 
     /**
-     * @OneToMany(targetEntity="Direction", mappedBy="place", cascade={"persist"})
+     * @OneToMany(targetEntity="Direction", mappedBy="placeStart", cascade={"persist"})
      */
     private $directions;
 

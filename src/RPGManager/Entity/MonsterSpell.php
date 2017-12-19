@@ -20,13 +20,13 @@ class MonsterSpell
      * @ManyToOne(targetEntity="Monster", inversedBy="monsterspells", cascade={"persist"})
      * @JoinColumn(name="monster_id", referencedColumnName="id")
      */
-    private $monsters;
+    private $monster;
 
     /**
-     * @ManyToOne(targetEntity="Spell", inversedBy="monsterspells", cascade={"persist"})
+     * @ManyToOne(targetEntity="Spell", inversedBy="monsterpells", cascade={"persist"})
      * @JoinColumn(name="spell_id", referencedColumnName="id")
      */
-    private $spells;
+    private $spell;
 
     /**
      * @return int
@@ -47,33 +47,33 @@ class MonsterSpell
     /**
      * @return mixed
      */
-    public function getMonsters()
+    public function getMonster()
     {
-        return $this->monsters;
+        return $this->monster;
     }
 
     /**
-     * @param mixed $monsters
+     * @param mixed $monster
      */
-    public function setMonsters($monsters)
+    public function setMonster($monster)
     {
-        $this->monsters = $monsters;
+        $this->monster = $monster;
     }
 
     /**
      * @return mixed
      */
-    public function getSpells()
+    public function getSpell()
     {
-        return $this->spells;
+        return $this->spell;
     }
 
     /**
-     * @param mixed $spells
+     * @param mixed $spell
      */
-    public function setSpells($spells)
+    public function setSpell($spell)
     {
-        $this->spells = $spells;
+        $this->spell = $spell;
     }
 
 }

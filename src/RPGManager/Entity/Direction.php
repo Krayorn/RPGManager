@@ -32,9 +32,15 @@ class Direction
 
     /**
      * @ManyToOne(targetEntity="Place", inversedBy="directions", cascade={"persist"})
-     * @JoinColumn(name="place_id", referencedColumnName="id")
+     * @JoinColumn(name="place_start_id", referencedColumnName="id")
      */
-    private $place;
+    private $placeStart;
+
+    /**
+     * @ManyToOne(targetEntity="Place", inversedBy="directions", cascade={"persist"})
+     * @JoinColumn(name="place_arrival_id", referencedColumnName="id")
+     */
+    private $placeArrival;
 
     /**
      * @return int
@@ -87,17 +93,33 @@ class Direction
     /**
      * @return mixed
      */
-    public function getPlace()
+    public function getPlaceStart()
     {
-        return $this->place;
+        return $this->placeStart;
     }
 
     /**
-     * @param mixed $place
+     * @param mixed $placeStart
      */
-    public function setPlace($place)
+    public function setPlaceStart($placeStart)
     {
-        $this->place = $place;
+        $this->placeStart = $placeStart;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPlaceArrival()
+    {
+        return $this->placeArrival;
+    }
+
+    /**
+     * @param mixed $placeArrival
+     */
+    public function setPlaceArrival($placeArrival)
+    {
+        $this->placeArrival = $placeArrival;
     }
 
 }

@@ -37,13 +37,6 @@ class Npc
      */
     private $dialog;
 
-
-    /**
-     * @ManyToOne(targetEntity="Place", inversedBy="npcs", cascade={"persist"})
-     * @JoinColumn(name="location", referencedColumnName="id")
-     */
-    private $location;
-
     /**
      * @return int
      */
@@ -106,22 +99,6 @@ class Npc
     public function setDialog($dialog)
     {
         $this->dialog = $dialog;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLocation()
-    {
-        return $this->location;
-    }
-
-    /**
-     * @param mixed $location
-     */
-    public function setLocation($location)
-    {
-        $this->location = $location;
     }
 
 }

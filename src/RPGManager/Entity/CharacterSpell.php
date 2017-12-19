@@ -26,7 +26,7 @@ class CharacterSpell
      * @ManyToOne(targetEntity="Spell", inversedBy="characterspells", cascade={"persist"})
      * @JoinColumn(name="spell_id", referencedColumnName="id")
      */
-    private $spells;
+    private $spell;
 
     /**
      * @return int
@@ -63,17 +63,17 @@ class CharacterSpell
     /**
      * @return mixed
      */
-    public function getSpells()
+    public function getSpell()
     {
-        return $this->spells;
+        return $this->spell;
     }
 
     /**
-     * @param mixed $spells
+     * @param mixed $spell
      */
-    public function setSpells($spells)
+    public function setSpell($spell)
     {
-        $this->spells = $spells;
+        $this->spell = $spell;
     }
 
 }
