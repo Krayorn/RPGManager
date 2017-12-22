@@ -26,7 +26,7 @@ class Character
     /**
      * @var \string
      *
-     * @Column(name="description", type="text")
+     * @Column(name="description", type="text", nullable=true)
      */
     private $description;
 
@@ -46,9 +46,10 @@ class Character
     private $characterspells;
 
     /**
-     * @var \int
+     * @var \string
      *
-     * @Column(name="location", type="integer")
+     * @OneToOne(targetEntity="Place", inversedBy="character", cascade={"persist"})
+     * @JoinColumn(name="place_id", referencedColumnName="id")
      */
     private $location;
 
@@ -149,7 +150,7 @@ class Character
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getLocation()
     {
@@ -157,7 +158,7 @@ class Character
     }
 
     /**
-     * @param int $location
+     * @param string $location
      */
     public function setLocation($location)
     {

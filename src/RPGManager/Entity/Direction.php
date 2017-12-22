@@ -24,13 +24,6 @@ class Direction
     private $name;
 
     /**
-     * @var \string
-     *
-     * @Column(name="description", type="text")
-     */
-    private $description;
-
-    /**
      * @ManyToOne(targetEntity="Place", inversedBy="directions", cascade={"persist"})
      * @JoinColumn(name="place_start_id", referencedColumnName="id")
      */
@@ -72,22 +65,6 @@ class Direction
     public function setName($name)
     {
         $this->name = $name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param string $description
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
     }
 
     /**

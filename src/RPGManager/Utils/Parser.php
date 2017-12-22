@@ -72,10 +72,8 @@ class Parser extends Template {
                 $itemsStatsTable[$item['name'] . '_' . $stat['name']]->setItem($itemsEntities[$item['name']]);
                 $itemsStatsTable[$item['name'] . '_' . $stat['name']]->setStat($statsEntities[$stat['name'] . '_' . $stat['value']]);
 
-                // $entityManager->persist($itemsStatsTable[$item['name'] . '_' . $stat['name']]);
+                $entityManager->persist($itemsStatsTable[$item['name'] . '_' . $stat['name']]);
             }
-
-            // $entityManager->persist($itemsEntities[$item['name']]);
         }
 
         $spellsEntities = [];
@@ -92,9 +90,8 @@ class Parser extends Template {
                 $spellsStatsTable[$spell['name'] . '_' . $stat['name']]->setSpell($spellsEntities[$spell['name']]);
                 $spellsStatsTable[$spell['name'] . '_' . $stat['name']]->setStat($statsEntities[$stat['name'] . '_' . $stat['value']]);
 
-                // $entityManager->persist($spellsStatsTable[$spell['name'] . '_' . $stat['name']]);
+                $entityManager->persist($spellsStatsTable[$spell['name'] . '_' . $stat['name']]);
             }
-            // $entityManager->persist($spellsEntities[$spell['name']]);
         }
 
         $monstersEntities = [];
@@ -113,7 +110,7 @@ class Parser extends Template {
                 $monstersStatsTable[$monster['name'] . '_' . $stat['name']]->setMonster($monstersEntities[$monster['name']]);
                 $monstersStatsTable[$monster['name'] . '_' . $stat['name']]->setStat($statsEntities[$stat['name'] . '_' . $stat['value']]);
 
-                // $entityManager->persist($monstersStatsTable[$monster['name'] . '_' . $stat['name']]);
+                $entityManager->persist($monstersStatsTable[$monster['name'] . '_' . $stat['name']]);
             }
 
             foreach ($monster['spells'] as $key => $spell) {
@@ -121,7 +118,7 @@ class Parser extends Template {
                 $monstersSpellsTable[$monster['name'] . '_' . $spell['name']]->setMonster($monstersEntities[$monster['name']]);
                 $monstersSpellsTable[$monster['name'] . '_' . $spell['name']]->setSpell($spellsEntities[$spell['name']]);
 
-                // $entityManager->persist($monstersSpellsTable[$monster['name'] . '_' . $spell['name']]);
+                $entityManager->persist($monstersSpellsTable[$monster['name'] . '_' . $spell['name']]);
             }
 
             if (isset($monster['inventory'])) {
@@ -130,11 +127,9 @@ class Parser extends Template {
                     $monstersInventoryTable[$monster['name'] . '_' . $item['name']]->setMonster($monstersEntities[$monster['name']]);
                     $monstersInventoryTable[$monster['name'] . '_' . $item['name']]->setItem($itemsEntities[$item['name']]);
 
-                    // $entityManager->persist($monstersInventoryTable[$monster['name'] . '_' . $item['name']]);
+                    $entityManager->persist($monstersInventoryTable[$monster['name'] . '_' . $item['name']]);
                 }
             }
-
-            // $entityManager->persist($monstersEntities[$monster['name']]);
         }
 
         $npcsEntities = [];
@@ -146,7 +141,7 @@ class Parser extends Template {
             $npcsEntities[$npc['name']]->setDescription($npc['description']);
             $npcsEntities[$npc['name']]->setDialog($npc['dialog']);
 
-            // $entityManager->persist($npcsEntities[$npc['name']]);
+            $entityManager->persist($npcsEntities[$npc['name']]);
         }
 
         $placesEntities = [];
@@ -158,7 +153,8 @@ class Parser extends Template {
             // TODO: condition for checking description exists;
             $placesEntities[$place['name']]->setDescription($place['description']);
 
-            // $entityManager->persist($placesEntities[$place['name']]);
+            $entityManager->persist($placesEntities[$place['name']]);
+
         }
 
         foreach ($places as $key => $place) {
@@ -168,7 +164,7 @@ class Parser extends Template {
                 $placesDirectionsTable[$place['name'] . '_' . $direction['directionName']]->setPlaceStart($placesEntities[$place['name']]);
                 $placesDirectionsTable[$place['name'] . '_' . $direction['directionName']]->setPlaceArrival($placesEntities[$direction['placeArrival']]);
 
-                // $entityManager->persist($placesDirectionsTable[$place['name'] . '_' . $direction['directionName']]);
+                $entityManager->persist($placesDirectionsTable[$place['name'] . '_' . $direction['directionName']]);
             }
         }
 
@@ -182,7 +178,7 @@ class Parser extends Template {
             $charactersEntities[$character['name']]->setName($character['name']);
             // TODO: condition for checking description exists
             $charactersEntities[$character['name']]->setDescription($character['description']);
-            $charactersEntities[$character['name']]->setLocation($character['location']);
+            $charactersEntities[$character['name']]->setLocation($placesEntities[$character['location']]);
 
             foreach ($character['stats'] as $key => $stat) {
                 $charactersStatsTable[$character['name'] . '_' . $stat['name']] = new CharacterStat();
@@ -209,9 +205,9 @@ class Parser extends Template {
                     // $entityManager->persist($charactersInventoryTable[$character['name'] . '_' . $item['name']]);
                 }
             }
-
-            // $entityManager->persist($charactersEntities[$character['name']]);
         }
+
+        // var_dump($charactersEntities);
 
         $entityManager->flush();
 

@@ -26,7 +26,7 @@ class Item
     /**
      * @var \string
      *
-     * @Column(name="description", type="text")
+     * @Column(name="description", type="text", nullable=true)
      */
     private $description;
 
