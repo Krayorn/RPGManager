@@ -44,8 +44,7 @@ class Character
     private $characterSpells;
 
     /**
-     * @var string
-     * @OneToOne(targetEntity="Place", inversedBy="character", cascade={"persist"})
+     * @ManyToOne(targetEntity="Place", inversedBy="characters", cascade={"persist"})
      * @JoinColumn(name="place_id", referencedColumnName="id")
      */
     private $location;
@@ -145,21 +144,21 @@ class Character
 	{
 		$this->characterSpells = $characterSpells;
 	}
-
-    /**
-     * @return string
-     */
-    public function getLocation()
-    {
-        return $this->location;
-    }
-
-    /**
-     * @param string $location
-     */
-    public function setLocation($location)
-    {
-        $this->location = $location;
-    }
+	
+	/**
+	 * @return mixed
+	 */
+	public function getLocation()
+	{
+		return $this->location;
+	}
+	
+	/**
+	 * @param mixed $location
+	 */
+	public function setLocation($location)
+	{
+		$this->location = $location;
+	}
 
 }
