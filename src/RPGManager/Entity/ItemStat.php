@@ -10,7 +10,6 @@ class ItemStat
 {
     /**
      * @var int
-     *
      * @Column(name="id", type="integer")
      * @Id
      * @GeneratedValue(strategy="AUTO")

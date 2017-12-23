@@ -3,13 +3,13 @@
 namespace RPGManager\Entity;
 
 /**
- * @Entity @Table(name="npclocation")
+ * @Entity
+ * @Table(name="npc_location")
  **/
 class NpcLocation
 {
 	/**
 	 * @var int
-	 *
 	 * @Column(name="id", type="integer")
 	 * @Id
 	 * @GeneratedValue(strategy="AUTO")
@@ -17,7 +17,7 @@ class NpcLocation
 	private $id;
 	
 	/**
-	 * @ManyToOne(targetEntity="Npc", inversedBy="npclocations", cascade={"persist"})
+	 * @ManyToOne(targetEntity="Npc", inversedBy="npcLocations", cascade={"persist"})
 	 * @JoinColumn(name="npc_id", referencedColumnName="id")
 	 */
 	private $npc;
@@ -29,7 +29,7 @@ class NpcLocation
 	private $number;
 	
 	/**
-	 * @ManyToOne(targetEntity="Place", inversedBy="npclocations", cascade={"persist"})
+	 * @ManyToOne(targetEntity="Place", inversedBy="npcLocations", cascade={"persist"})
 	 * @JoinColumn(name="place_id", referencedColumnName="id")
 	 */
 	private $place;

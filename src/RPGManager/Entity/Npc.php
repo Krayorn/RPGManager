@@ -3,13 +3,13 @@
 namespace RPGManager\Entity;
 
 /**
- * @Entity @Table(name="npc")
+ * @Entity
+ * @Table(name="npc")
  **/
 class Npc
 {
     /**
      * @var int
-     *
      * @Column(name="id", type="integer")
      * @Id
      * @GeneratedValue(strategy="AUTO")
@@ -18,21 +18,18 @@ class Npc
 
     /**
      * @var string
-     *
      * @Column(name="name", type="string", length=255)
      */
     private $name;
 
     /**
-     * @var \string
-     *
+     * @var string
      * @Column(name="description", type="text", nullable=true)
      */
     private $description;
 
     /**
-     * @var \string
-     *
+     * @var string
      * @Column(name="dialog", type="text")
      */
     private $dialog;
@@ -40,7 +37,7 @@ class Npc
 	/**
 	 * @OneToMany(targetEntity="NpcLocation", mappedBy="npc", cascade={"persist"})
 	 */
-	private $npclocations;
+	private $npcLocations;
 
     /**
      * @return int
@@ -109,17 +106,17 @@ class Npc
 	/**
 	 * @return mixed
 	 */
-	public function getNpclocations()
+	public function getNpcLocations()
 	{
-		return $this->npclocations;
+		return $this->npcLocations;
 	}
 	
 	/**
-	 * @param mixed $npclocations
+	 * @param mixed $npcLocations
 	 */
-	public function setNpclocations($npclocations)
+	public function setNpcLocations($npcLocations)
 	{
-		$this->npclocations = $npclocations;
+		$this->npcLocations = $npcLocations;
 	}
 
 }

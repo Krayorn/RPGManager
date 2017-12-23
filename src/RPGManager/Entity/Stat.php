@@ -3,13 +3,13 @@
 namespace RPGManager\Entity;
 
 /**
- * @Entity @Table(name="stat")
+ * @Entity
+ * @Table(name="stat")
  **/
 class Stat
 {
     /**
      * @var int
-     *
      * @Column(name="id", type="integer")
      * @Id
      * @GeneratedValue(strategy="AUTO")
@@ -18,21 +18,18 @@ class Stat
 
     /**
      * @var string
-     *
      * @Column(name="name", type="string", length=255)
      */
     private $name;
 
     /**
-     * @var \string
-     *
+     * @var string
      * @Column(name="description", type="text", nullable=true)
      */
     private $description;
 
     /**
-     * @var \int
-     *
+     * @var int
      * @Column(name="value", type="integer")
      */
     private $value;
@@ -45,7 +42,7 @@ class Stat
     /**
      * @OneToMany(targetEntity="MonsterStat", mappedBy="stat", cascade={"persist"})
      */
-    private $monsterstats;
+    private $monsterStats;
 
     /**
      * @OneToMany(targetEntity="ItemStat", mappedBy="stat", cascade={"persist"})
@@ -55,7 +52,7 @@ class Stat
     /**
      * @OneToMany(targetEntity="SpellStat", mappedBy="stat", cascade={"persist"})
      */
-    private $spellstats;
+    private $spellStats;
 
     /**
      * @return int
@@ -136,22 +133,22 @@ class Stat
     {
         $this->characterstats = $characterstats;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getMonsterstats()
-    {
-        return $this->monsterstats;
-    }
-
-    /**
-     * @param mixed $monsterstats
-     */
-    public function setMonsterstats($monsterstats)
-    {
-        $this->monsterstats = $monsterstats;
-    }
+	
+	/**
+	 * @return mixed
+	 */
+	public function getMonsterStats()
+	{
+		return $this->monsterStats;
+	}
+	
+	/**
+	 * @param mixed $monsterStats
+	 */
+	public function setMonsterStats($monsterStats)
+	{
+		$this->monsterStats = $monsterStats;
+	}
 	
 	/**
 	 * @return mixed
@@ -168,21 +165,21 @@ class Stat
 	{
 		$this->itemStats = $itemStats;
 	}
-
-    /**
-     * @return mixed
-     */
-    public function getSpellstats()
-    {
-        return $this->spellstats;
-    }
-
-    /**
-     * @param mixed $spellstats
-     */
-    public function setSpellstats($spellstats)
-    {
-        $this->spellstats = $spellstats;
-    }
+	
+	/**
+	 * @return mixed
+	 */
+	public function getSpellStats()
+	{
+		return $this->spellStats;
+	}
+	
+	/**
+	 * @param mixed $spellStats
+	 */
+	public function setSpellStats($spellStats)
+	{
+		$this->spellStats = $spellStats;
+	}
 
 }

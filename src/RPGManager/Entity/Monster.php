@@ -3,13 +3,13 @@
 namespace RPGManager\Entity;
 
 /**
- * @Entity @Table(name="monster")
+ * @Entity
+ * @Table(name="monster")
  **/
 class Monster
 {
     /**
      * @var int
-     *
      * @Column(name="id", type="integer")
      * @Id
      * @GeneratedValue(strategy="AUTO")
@@ -18,14 +18,12 @@ class Monster
 
     /**
      * @var string
-     *
      * @Column(name="name", type="string", length=255)
      */
     private $name;
 
     /**
-     * @var \string
-     *
+     * @var string
      * @Column(name="description", type="text", nullable=true)
      */
     private $description;
@@ -33,22 +31,22 @@ class Monster
     /**
      * @OneToMany(targetEntity="MonsterInventory", mappedBy="monster", cascade={"persist"})
      */
-    private $monsterinventories;
+    private $monsterInventories;
 
     /**
      * @OneToMany(targetEntity="MonsterStat", mappedBy="monster", cascade={"persist"})
      */
-    private $monsterstats;
+    private $monsterStats;
 
     /**
      * @OneToMany(targetEntity="MonsterSpell", mappedBy="monster", cascade={"persist"})
      */
-    private $monsterspells;
+    private $monsterSpells;
 
     /**
      * @OneToMany(targetEntity="MonsterLocation", mappedBy="monster", cascade={"persist"})
      */
-    private $monsterlocations;
+    private $monsterLocations;
 
     /**
      * @return int
@@ -97,69 +95,69 @@ class Monster
     {
         $this->description = $description;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getMonsterinventories()
-    {
-        return $this->monsterinventories;
-    }
-
-    /**
-     * @param mixed $monsterinventories
-     */
-    public function setMonsterinventories($monsterinventories)
-    {
-        $this->monsterinventories = $monsterinventories;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMonsterstats()
-    {
-        return $this->monsterstats;
-    }
-
-    /**
-     * @param mixed $monsterstats
-     */
-    public function setMonsterstats($monsterstats)
-    {
-        $this->monsterstats = $monsterstats;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMonsterspells()
-    {
-        return $this->monsterspells;
-    }
-
-    /**
-     * @param mixed $monsterspells
-     */
-    public function setMonsterspells($monsterspells)
-    {
-        $this->monsterspells = $monsterspells;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMonsterlocations()
-    {
-        return $this->monsterlocations;
-    }
-
-    /**
-     * @param mixed $monsterlocations
-     */
-    public function setMonsterlocations($monsterlocations)
-    {
-        $this->monsterlocations = $monsterlocations;
-    }
+	
+	/**
+	 * @return mixed
+	 */
+	public function getMonsterInventories()
+	{
+		return $this->monsterInventories;
+	}
+	
+	/**
+	 * @param mixed $monsterInventories
+	 */
+	public function setMonsterInventories($monsterInventories)
+	{
+		$this->monsterInventories = $monsterInventories;
+	}
+	
+	/**
+	 * @return mixed
+	 */
+	public function getMonsterStats()
+	{
+		return $this->monsterStats;
+	}
+	
+	/**
+	 * @param mixed $monsterStats
+	 */
+	public function setMonsterStats($monsterStats)
+	{
+		$this->monsterStats = $monsterStats;
+	}
+	
+	/**
+	 * @return mixed
+	 */
+	public function getMonsterSpells()
+	{
+		return $this->monsterSpells;
+	}
+	
+	/**
+	 * @param mixed $monsterSpells
+	 */
+	public function setMonsterSpells($monsterSpells)
+	{
+		$this->monsterSpells = $monsterSpells;
+	}
+	
+	/**
+	 * @return mixed
+	 */
+	public function getMonsterLocations()
+	{
+		return $this->monsterLocations;
+	}
+	
+	/**
+	 * @param mixed $monsterLocations
+	 */
+	public function setMonsterLocations($monsterLocations)
+	{
+		$this->monsterLocations = $monsterLocations;
+	}
 
 }

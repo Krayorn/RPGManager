@@ -3,13 +3,13 @@
 namespace RPGManager\Entity;
 
 /**
- * @Entity @Table(name="spell")
+ * @Entity
+ * @Table(name="spell")
  **/
 class Spell
 {
     /**
      * @var int
-     *
      * @Column(name="id", type="integer")
      * @Id
      * @GeneratedValue(strategy="AUTO")
@@ -18,21 +18,18 @@ class Spell
 
     /**
      * @var string
-     *
      * @Column(name="name", type="string", length=255)
      */
     private $name;
 
     /**
-     * @var \string
-     *
+     * @var string
      * @Column(name="description", type="text", nullable=true)
      */
     private $description;
 
     /**
-     * @var \string
-     *
+     * @var string
      * @Column(name="type", type="string", length=255)
      */
     private $type;
@@ -40,7 +37,7 @@ class Spell
     /**
      * @OneToMany(targetEntity="SpellStat", mappedBy="spell", cascade={"persist"})
      */
-    private $spellstats;
+    private $spellStats;
 
     /**
      * @OneToMany(targetEntity="CharacterSpell", mappedBy="spell", cascade={"persist"})
@@ -50,7 +47,7 @@ class Spell
     /**
      * @OneToMany(targetEntity="MonsterSpell", mappedBy="spell", cascade={"persist"})
      */
-    private $monsterspells;
+    private $monsterSpells;
 
     /**
      * @return int
@@ -115,22 +112,22 @@ class Spell
     {
         $this->type = $type;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getSpellstats()
-    {
-        return $this->spellstats;
-    }
-
-    /**
-     * @param mixed $spellstats
-     */
-    public function setSpellstats($spellstats)
-    {
-        $this->spellstats = $spellstats;
-    }
+	
+	/**
+	 * @return mixed
+	 */
+	public function getSpellStats()
+	{
+		return $this->spellStats;
+	}
+	
+	/**
+	 * @param mixed $spellStats
+	 */
+	public function setSpellStats($spellStats)
+	{
+		$this->spellStats = $spellStats;
+	}
 
     /**
      * @return mixed
@@ -147,21 +144,21 @@ class Spell
     {
         $this->characterspells = $characterspells;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getMonsterspells()
-    {
-        return $this->monsterspells;
-    }
-
-    /**
-     * @param mixed $monsterspells
-     */
-    public function setMonsterspells($monsterspells)
-    {
-        $this->monsterspells = $monsterspells;
-    }
+	
+	/**
+	 * @return mixed
+	 */
+	public function getMonsterSpells()
+	{
+		return $this->monsterSpells;
+	}
+	
+	/**
+	 * @param mixed $monsterSpells
+	 */
+	public function setMonsterSpells($monsterSpells)
+	{
+		$this->monsterSpells = $monsterSpells;
+	}
 
 }

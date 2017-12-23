@@ -3,13 +3,13 @@
 namespace RPGManager\Entity;
 
 /**
- * @Entity @Table(name="place")
+ * @Entity
+ * @Table(name="place")
  **/
 class Place
 {
     /**
      * @var int
-     *
      * @Column(name="id", type="integer")
      * @Id
      * @GeneratedValue(strategy="AUTO")
@@ -18,14 +18,12 @@ class Place
 
     /**
      * @var string
-     *
      * @Column(name="name", type="string", length=255)
      */
     private $name;
 
     /**
-     * @var \string
-     *
+     * @var string
      * @Column(name="description", type="text", nullable=true)
      */
     private $description;
@@ -38,7 +36,7 @@ class Place
     /**
      * @OneToMany(targetEntity="MonsterLocation", mappedBy="place", cascade={"persist"})
      */
-    private $monsterlocations;
+    private $monsterLocations;
 
     /**
      * @OneToMany(targetEntity="ItemLocation", mappedBy="place", cascade={"persist"})
@@ -48,7 +46,7 @@ class Place
     /**
      * @OneToMany(targetEntity="NpcLocation", mappedBy="place", cascade={"persist"})
      */
-    private $npclocations;
+    private $npcLocations;
 
     /**
      * @return int
@@ -113,22 +111,22 @@ class Place
     {
         $this->directions = $directions;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getMonsterlocations()
-    {
-        return $this->monsterlocations;
-    }
-
-    /**
-     * @param mixed $monsterlocations
-     */
-    public function setMonsterlocations($monsterlocations)
-    {
-        $this->monsterlocations = $monsterlocations;
-    }
+	
+	/**
+	 * @return mixed
+	 */
+	public function getMonsterLocations()
+	{
+		return $this->monsterLocations;
+	}
+	
+	/**
+	 * @param mixed $monsterLocations
+	 */
+	public function setMonsterLocations($monsterLocations)
+	{
+		$this->monsterLocations = $monsterLocations;
+	}
 	
 	/**
 	 * @return mixed
@@ -149,17 +147,17 @@ class Place
 	/**
 	 * @return mixed
 	 */
-	public function getNpclocations()
+	public function getNpcLocations()
 	{
-		return $this->npclocations;
+		return $this->npcLocations;
 	}
 	
 	/**
-	 * @param mixed $npclocations
+	 * @param mixed $npcLocations
 	 */
-	public function setNpclocations($npclocations)
+	public function setNpcLocations($npcLocations)
 	{
-		$this->npclocations = $npclocations;
+		$this->npcLocations = $npcLocations;
 	}
 
 }
