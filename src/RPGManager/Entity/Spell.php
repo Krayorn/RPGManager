@@ -42,7 +42,7 @@ class Spell
     /**
      * @OneToMany(targetEntity="CharacterSpell", mappedBy="spell", cascade={"persist"})
      */
-    private $characterspells;
+    private $characterSpells;
 
     /**
      * @OneToMany(targetEntity="MonsterSpell", mappedBy="spell", cascade={"persist"})
@@ -128,22 +128,22 @@ class Spell
 	{
 		$this->spellStats = $spellStats;
 	}
-
-    /**
-     * @return mixed
-     */
-    public function getCharacterspells()
-    {
-        return $this->characterspells;
-    }
-
-    /**
-     * @param mixed $characterspells
-     */
-    public function setCharacterspells($characterspells)
-    {
-        $this->characterspells = $characterspells;
-    }
+	
+	/**
+	 * @return mixed
+	 */
+	public function getCharacterSpells()
+	{
+		return $this->characterSpells;
+	}
+	
+	/**
+	 * @param mixed $characterSpells
+	 */
+	public function setCharacterSpells($characterSpells)
+	{
+		$this->characterSpells = $characterSpells;
+	}
 	
 	/**
 	 * @return mixed

@@ -3,13 +3,13 @@
 namespace RPGManager\Entity;
 
 /**
- * @Entity @Table(name="characterinventory")
+ * @Entity
+ * @Table(name="character_inventory")
  **/
 class CharacterInventory
 {
     /**
      * @var int
-     *
      * @Column(name="id", type="integer")
      * @Id
      * @GeneratedValue(strategy="AUTO")
@@ -17,13 +17,13 @@ class CharacterInventory
     private $id;
 
     /**
-     * @ManyToOne(targetEntity="Character", inversedBy="characterinventories", cascade={"persist"})
+     * @ManyToOne(targetEntity="Character", inversedBy="characterInventories", cascade={"persist"})
      * @JoinColumn(name="character_id", referencedColumnName="id")
      */
     private $character;
 
     /**
-     * @ManyToOne(targetEntity="Item", inversedBy="characterinventories", cascade={"persist"})
+     * @ManyToOne(targetEntity="Item", inversedBy="characterInventories", cascade={"persist"})
      * @JoinColumn(name="item_id", referencedColumnName="id")
      */
     private $item;

@@ -37,7 +37,7 @@ class Stat
     /**
      * @OneToMany(targetEntity="CharacterStat", mappedBy="stat", cascade={"persist"})
      */
-    private $characterstats;
+    private $characterStats;
 
     /**
      * @OneToMany(targetEntity="MonsterStat", mappedBy="stat", cascade={"persist"})
@@ -117,22 +117,22 @@ class Stat
     {
         $this->value = $value;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getCharacterstats()
-    {
-        return $this->characterstats;
-    }
-
-    /**
-     * @param mixed $characterstats
-     */
-    public function setCharacterstats($characterstats)
-    {
-        $this->characterstats = $characterstats;
-    }
+	
+	/**
+	 * @return mixed
+	 */
+	public function getCharacterStats()
+	{
+		return $this->characterStats;
+	}
+	
+	/**
+	 * @param mixed $characterStats
+	 */
+	public function setCharacterStats($characterStats)
+	{
+		$this->characterStats = $characterStats;
+	}
 	
 	/**
 	 * @return mixed

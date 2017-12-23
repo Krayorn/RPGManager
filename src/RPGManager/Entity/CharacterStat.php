@@ -3,13 +3,13 @@
 namespace RPGManager\Entity;
 
 /**
- * @Entity @Table(name="characterstat")
+ * @Entity
+ * @Table(name="character_stat")
  **/
 class CharacterStat
 {
     /**
      * @var int
-     *
      * @Column(name="id", type="integer")
      * @Id
      * @GeneratedValue(strategy="AUTO")
@@ -17,13 +17,13 @@ class CharacterStat
     private $id;
 
     /**
-     * @ManyToOne(targetEntity="Character", inversedBy="characterstats", cascade={"persist"})
+     * @ManyToOne(targetEntity="Character", inversedBy="characterStats", cascade={"persist"})
      * @JoinColumn(name="character_id", referencedColumnName="id")
      */
     private $character;
 
     /**
-     * @ManyToOne(targetEntity="Stat", inversedBy="characterstats", cascade={"persist"})
+     * @ManyToOne(targetEntity="Stat", inversedBy="characterStats", cascade={"persist"})
      * @JoinColumn(name="stat_id", referencedColumnName="id")
      */
     private $stat;
