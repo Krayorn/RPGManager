@@ -4,7 +4,7 @@ namespace RPGManager\Entity;
 
 /**
  * @Entity
- * @Table(name="character")
+ * @Table(name="playercharacter")
  **/
 class Character
 {
@@ -96,7 +96,7 @@ class Character
     {
         $this->description = $description;
     }
-	
+
 	/**
 	 * @return mixed
 	 */
@@ -104,7 +104,7 @@ class Character
 	{
 		return $this->characterInventories;
 	}
-	
+
 	/**
 	 * @param mixed $characterInventories
 	 */
@@ -112,7 +112,7 @@ class Character
 	{
 		$this->characterInventories = $characterInventories;
 	}
-	
+
 	/**
 	 * @return mixed
 	 */
@@ -120,7 +120,7 @@ class Character
 	{
 		return $this->characterStats;
 	}
-	
+
 	/**
 	 * @param mixed $characterStats
 	 */
@@ -128,7 +128,7 @@ class Character
 	{
 		$this->characterStats = $characterStats;
 	}
-	
+
 	/**
 	 * @return mixed
 	 */
@@ -136,7 +136,7 @@ class Character
 	{
 		return $this->characterSpells;
 	}
-	
+
 	/**
 	 * @param mixed $characterSpells
 	 */
@@ -144,7 +144,7 @@ class Character
 	{
 		$this->characterSpells = $characterSpells;
 	}
-	
+
 	/**
 	 * @return mixed
 	 */
@@ -152,7 +152,7 @@ class Character
 	{
 		return $this->location;
 	}
-	
+
 	/**
 	 * @param mixed $location
 	 */

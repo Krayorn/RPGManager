@@ -47,7 +47,7 @@ class Place
      * @OneToMany(targetEntity="NpcLocation", mappedBy="place", cascade={"persist"})
      */
     private $npcLocations;
-	
+
 	/**
 	 * @OneToMany(targetEntity="Character", mappedBy="location", cascade={"persist"})
 	 */
@@ -116,7 +116,7 @@ class Place
     {
         $this->directions = $directions;
     }
-	
+
 	/**
 	 * @return mixed
 	 */
@@ -124,7 +124,7 @@ class Place
 	{
 		return $this->monsterLocations;
 	}
-	
+
 	/**
 	 * @param mixed $monsterLocations
 	 */
@@ -132,7 +132,7 @@ class Place
 	{
 		$this->monsterLocations = $monsterLocations;
 	}
-	
+
 	/**
 	 * @return mixed
 	 */
@@ -140,7 +140,7 @@ class Place
 	{
 		return $this->itemLocations;
 	}
-	
+
 	/**
 	 * @param mixed $itemLocations
 	 */
@@ -148,7 +148,7 @@ class Place
 	{
 		$this->itemLocations = $itemLocations;
 	}
-	
+
 	/**
 	 * @return mixed
 	 */
@@ -156,7 +156,7 @@ class Place
 	{
 		return $this->npcLocations;
 	}
-	
+
 	/**
 	 * @param mixed $npcLocations
 	 */
@@ -164,7 +164,7 @@ class Place
 	{
 		$this->npcLocations = $npcLocations;
 	}
-	
+
 	/**
 	 * @return mixed
 	 */
@@ -172,7 +172,7 @@ class Place
 	{
 		return $this->characters;
 	}
-	
+
 	/**
 	 * @param mixed $characters
 	 */
