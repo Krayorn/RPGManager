@@ -46,9 +46,9 @@ class Place
     private $itemlocations;
 
     /**
-     * @OneToMany(targetEntity="Npc", mappedBy="place", cascade={"persist"})
+     * @OneToMany(targetEntity="NpcLocation", mappedBy="place", cascade={"persist"})
      */
-    private $npcs;
+    private $npclocations;
 
     /**
      * @return int
@@ -145,21 +145,21 @@ class Place
     {
         $this->itemlocations = $itemlocations;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getNpcs()
-    {
-        return $this->npcs;
-    }
-
-    /**
-     * @param mixed $npcs
-     */
-    public function setNpcs($npcs)
-    {
-        $this->npcs = $npcs;
-    }
+	
+	/**
+	 * @return mixed
+	 */
+	public function getNpclocations()
+	{
+		return $this->npclocations;
+	}
+	
+	/**
+	 * @param mixed $npclocations
+	 */
+	public function setNpclocations($npclocations)
+	{
+		$this->npclocations = $npclocations;
+	}
 
 }

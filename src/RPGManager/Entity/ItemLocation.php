@@ -21,6 +21,12 @@ class ItemLocation
      * @JoinColumn(name="item_id", referencedColumnName="id")
      */
     private $item;
+	
+	/**
+	 * @var int
+	 * @Column(name="number", type="integer")
+	 */
+    private $number;
 
     /**
      * @ManyToOne(targetEntity="Place", inversedBy="itemlocations", cascade={"persist"})
@@ -59,6 +65,22 @@ class ItemLocation
     {
         $this->item = $item;
     }
+	
+	/**
+	 * @return int
+	 */
+	public function getNumber()
+	{
+		return $this->number;
+	}
+	
+	/**
+	 * @param int $number
+	 */
+	public function setNumber($number)
+	{
+		$this->number = $number;
+	}
 
     /**
      * @return mixed

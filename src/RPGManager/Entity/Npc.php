@@ -36,6 +36,11 @@ class Npc
      * @Column(name="dialog", type="text")
      */
     private $dialog;
+	
+	/**
+	 * @OneToMany(targetEntity="NpcLocation", mappedBy="npc", cascade={"persist"})
+	 */
+	private $npclocations;
 
     /**
      * @return int
@@ -100,5 +105,21 @@ class Npc
     {
         $this->dialog = $dialog;
     }
+	
+	/**
+	 * @return mixed
+	 */
+	public function getNpclocations()
+	{
+		return $this->npclocations;
+	}
+	
+	/**
+	 * @param mixed $npclocations
+	 */
+	public function setNpclocations($npclocations)
+	{
+		$this->npclocations = $npclocations;
+	}
 
 }

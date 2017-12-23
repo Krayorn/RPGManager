@@ -21,6 +21,12 @@ class MonsterLocation
      * @JoinColumn(name="monster_id", referencedColumnName="id")
      */
     private $monster;
+	
+	/**
+	 * @var int
+	 * @Column(name="number", type="integer")
+	 */
+	private $number;
 
     /**
      * @ManyToOne(targetEntity="Place", inversedBy="monsterlocations", cascade={"persist"})
@@ -59,6 +65,22 @@ class MonsterLocation
     {
         $this->monster = $monster;
     }
+	
+	/**
+	 * @return mixed
+	 */
+	public function getNumber()
+	{
+		return $this->number;
+	}
+	
+	/**
+	 * @param mixed $number
+	 */
+	public function setNumber($number)
+	{
+		$this->number = $number;
+	}
 
     /**
      * @return mixed
