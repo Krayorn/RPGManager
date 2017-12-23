@@ -3,7 +3,8 @@
 namespace RPGManager\Entity;
 
 /**
- * @Entity @Table(name="itemstat")
+ * @Entity
+ * @Table(name="item_stat")
  **/
 class ItemStat
 {
@@ -17,13 +18,13 @@ class ItemStat
     private $id;
 
     /**
-     * @ManyToOne(targetEntity="Item", inversedBy="itemstats", cascade={"persist"})
+     * @ManyToOne(targetEntity="Item", inversedBy="itemStats", cascade={"persist"})
      * @JoinColumn(name="item_id", referencedColumnName="id")
      */
     private $item;
 
     /**
-     * @ManyToOne(targetEntity="Stat", inversedBy="itemstats", cascade={"persist"})
+     * @ManyToOne(targetEntity="Stat", inversedBy="itemStats", cascade={"persist"})
      * @JoinColumn(name="stat_id", referencedColumnName="id")
      */
     private $stat;

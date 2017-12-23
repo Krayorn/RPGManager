@@ -43,7 +43,7 @@ class Place
     /**
      * @OneToMany(targetEntity="ItemLocation", mappedBy="place", cascade={"persist"})
      */
-    private $itemlocations;
+    private $itemLocations;
 
     /**
      * @OneToMany(targetEntity="NpcLocation", mappedBy="place", cascade={"persist"})
@@ -129,22 +129,22 @@ class Place
     {
         $this->monsterlocations = $monsterlocations;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getItemlocations()
-    {
-        return $this->itemlocations;
-    }
-
-    /**
-     * @param mixed $itemlocations
-     */
-    public function setItemlocations($itemlocations)
-    {
-        $this->itemlocations = $itemlocations;
-    }
+	
+	/**
+	 * @return mixed
+	 */
+	public function getItemLocations()
+	{
+		return $this->itemLocations;
+	}
+	
+	/**
+	 * @param mixed $itemLocations
+	 */
+	public function setItemLocations($itemLocations)
+	{
+		$this->itemLocations = $itemLocations;
+	}
 	
 	/**
 	 * @return mixed

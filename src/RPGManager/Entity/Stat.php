@@ -50,7 +50,7 @@ class Stat
     /**
      * @OneToMany(targetEntity="ItemStat", mappedBy="stat", cascade={"persist"})
      */
-    private $itemstats;
+    private $itemStats;
 
     /**
      * @OneToMany(targetEntity="SpellStat", mappedBy="stat", cascade={"persist"})
@@ -152,22 +152,22 @@ class Stat
     {
         $this->monsterstats = $monsterstats;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getItemstats()
-    {
-        return $this->itemstats;
-    }
-
-    /**
-     * @param mixed $itemstats
-     */
-    public function setItemstats($itemstats)
-    {
-        $this->itemstats = $itemstats;
-    }
+	
+	/**
+	 * @return mixed
+	 */
+	public function getItemStats()
+	{
+		return $this->itemStats;
+	}
+	
+	/**
+	 * @param mixed $itemStats
+	 */
+	public function setItemStats($itemStats)
+	{
+		$this->itemStats = $itemStats;
+	}
 
     /**
      * @return mixed

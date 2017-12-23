@@ -3,13 +3,13 @@
 namespace RPGManager\Entity;
 
 /**
- * @Entity @Table(name="item")
+ * @Entity
+ * @Table(name="item")
  **/
 class Item
 {
     /**
      * @var int
-     *
      * @Column(name="id", type="integer")
      * @Id
      * @GeneratedValue(strategy="AUTO")
@@ -18,14 +18,12 @@ class Item
 
     /**
      * @var string
-     *
      * @Column(name="name", type="string", length=255)
      */
     private $name;
 
     /**
-     * @var \string
-     *
+     * @var string
      * @Column(name="description", type="text", nullable=true)
      */
     private $description;
@@ -33,22 +31,22 @@ class Item
     /**
      * @OneToMany(targetEntity="ItemStat", mappedBy="item", cascade={"persist"})
      */
-    private $itemstats;
+    private $itemStats;
 
     /**
      * @OneToMany(targetEntity="ItemLocation", mappedBy="item", cascade={"persist"})
      */
-    private $itemlocations;
+    private $itemLocations;
 
     /**
      * @OneToMany(targetEntity="CharacterInventory", mappedBy="item", cascade={"persist"})
      */
-    private $characterinventories;
+    private $characterInventories;
 
     /**
      * @OneToMany(targetEntity="MonsterInventory", mappedBy="item", cascade={"persist"})
      */
-    private $monsterinventories;
+    private $monsterInventories;
 
     /**
      * @return int
@@ -97,69 +95,69 @@ class Item
     {
         $this->description = $description;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getItemstats()
-    {
-        return $this->itemstats;
-    }
-
-    /**
-     * @param mixed $itemstats
-     */
-    public function setItemstats($itemstats)
-    {
-        $this->itemstats = $itemstats;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getItemlocations()
-    {
-        return $this->itemlocations;
-    }
-
-    /**
-     * @param mixed $itemlocations
-     */
-    public function setItemlocations($itemlocations)
-    {
-        $this->itemlocations = $itemlocations;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCharacterinventories()
-    {
-        return $this->characterinventories;
-    }
-
-    /**
-     * @param mixed $characterinventories
-     */
-    public function setCharacterinventories($characterinventories)
-    {
-        $this->characterinventories = $characterinventories;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMonsterinventories()
-    {
-        return $this->monsterinventories;
-    }
-
-    /**
-     * @param mixed $monsterinventories
-     */
-    public function setMonsterinventories($monsterinventories)
-    {
-        $this->monsterinventories = $monsterinventories;
-    }
+	
+	/**
+	 * @return mixed
+	 */
+	public function getItemStats()
+	{
+		return $this->itemStats;
+	}
+	
+	/**
+	 * @param mixed $itemStats
+	 */
+	public function setItemStats($itemStats)
+	{
+		$this->itemStats = $itemStats;
+	}
+	
+	/**
+	 * @return mixed
+	 */
+	public function getItemLocations()
+	{
+		return $this->itemLocations;
+	}
+	
+	/**
+	 * @param mixed $itemLocations
+	 */
+	public function setItemLocations($itemLocations)
+	{
+		$this->itemLocations = $itemLocations;
+	}
+	
+	/**
+	 * @return mixed
+	 */
+	public function getCharacterInventories()
+	{
+		return $this->characterInventories;
+	}
+	
+	/**
+	 * @param mixed $characterInventories
+	 */
+	public function setCharacterInventories($characterInventories)
+	{
+		$this->characterInventories = $characterInventories;
+	}
+	
+	/**
+	 * @return mixed
+	 */
+	public function getMonsterInventories()
+	{
+		return $this->monsterInventories;
+	}
+	
+	/**
+	 * @param mixed $monsterInventories
+	 */
+	public function setMonsterInventories($monsterInventories)
+	{
+		$this->monsterInventories = $monsterInventories;
+	}
 
 }
