@@ -2,6 +2,7 @@
 
 namespace RPGManager\Model;
 
+use Doctrine\ORM\Query\ResultSetMapping;
 use RPGManager\Template;
 
 class Game extends Template
@@ -9,6 +10,7 @@ class Game extends Template
     private static $instance = null;
     private $basicActions = ["move", "take", "inventory"];
     private $currentPlayer;
+    private $em;
 
 
     public static function getInstance()
@@ -19,13 +21,13 @@ class Game extends Template
         return self::$instance;
     }
 
-    public static function startGame()
+    public static function startGame($entityManager)
     {
         $game = Game::getInstance();
-
         $game->writeAccessLog("startGame()");
-
-        while (true) {
+	    $game->setEntityManager($entityManager);
+	
+	    while (true) {
             $actions = $game->getAvailableActions();
             echo "\nAVAILABLE ACTIONS:\n";
             foreach ($actions as $value) {
@@ -38,6 +40,10 @@ class Game extends Template
             $args = explode(" ", $line);
             $game->executePlayerAction($args, $actions);
         }
+    }
+    
+    private function setEntityManager($entityManager) {
+    	$this->em = $entityManager;
     }
 
     private function getAvailableActions()
@@ -53,26 +59,23 @@ class Game extends Template
 
     private function isSomeoneInArea()
     {
-        // check monster and npc in area
+        // TODO check monster and npc in area
         return true;
     }
 
     private function executePlayerAction($args, $availableActions)
     {
         $this->writeAccessLog("executePlayerAction()");
-
-        $this->currentPlayer = trim($args[0]);
-
-        $this->isArgValid($availableActions, $args);
-
-        foreach ($availableActions as $value) {
-            if ($this->isValidAction($value, $args)) {
-
-                $this->writeActionLog($this->currentPlayer . " " . trim($args[1]) . " " . trim($args[2]));
-                $this->writeAccessLog($value . "Action");
-
-                call_user_func([$this, $value . "Action"]);
-            }
+	    $this->currentPlayer = trim($args[0]);
+	
+	    if ($this->isPlayerExists() && $this->isArgValid($availableActions, $args)) {
+	        foreach ($availableActions as $value) {
+		        if ($this->isValidAction($value, $args)) {
+			        $this->writeActionLog($this->currentPlayer . " " . trim($args[1]) . " " . trim($args[2]));
+			        $this->writeAccessLog($value . "Action");
+			        call_user_func([$this, $value . "Action"]);
+		        }
+	        }
         }
     }
 
@@ -80,8 +83,26 @@ class Game extends Template
     {
         if (!in_array(trim($args[1]), $availableActions)) {
             echo "COMMAND NOT VALID";
+            return false;
         }
         return true;
+    }
+    
+    private function isPlayerExists() {
+	    $result = $this->em->createQueryBuilder()
+		    ->select('player.name')
+		    ->from('RPGManager\Entity\Character', 'player')
+		    ->where('player.name = :name')
+		    ->setParameter('name', $this->currentPlayer)
+		    ->getQuery()
+		    ->getResult()
+	    ;
+	    
+	    if (empty($result) || null == $result) {
+	    	echo "THIS PLAYER DOES NOT EXIST. \n";
+		    return false;
+	    }
+	    return true;
     }
 
     private function isValidAction($actionName, $args)
@@ -97,10 +118,10 @@ class Game extends Template
 
     private function takeActionCheck($args)
     {
-        if (!isset($args[2]) || trim($args[2]) == '') {
+	    echo "IN TAKE ACTION CHECK \n";
+	    if (!isset($args[2]) || trim($args[2]) == '') {
             echo "ARGS MISSING";
         }
-        echo "IN TAKE ACTION CHECK";
         return true;
     }
 
@@ -109,13 +130,12 @@ class Game extends Template
         echo "IN TAKE ACTION \n";
     }
 
-    private function moveActionCheck()
+    private function moveActionCheck($args)
     {
-        if (!isset($args[2]) || trim($args[2]) == '') {
+	    echo "IN MOVE ACTION CHECK \n";
+	    if (!isset($args[2]) || trim($args[2]) == '') {
             echo "ARGS MISSING";
         }
-        echo "IN MOVE ACTION CHECK";
-
         return true;
     }
 
@@ -126,7 +146,7 @@ class Game extends Template
 
     private function inventoryActionCheck()
     {
-        echo "IN INVENTORY ACTION CHECK";
+        echo "IN INVENTORY ACTION CHECK \n";
 
         return true;
     }
@@ -134,15 +154,15 @@ class Game extends Template
     private function inventoryAction()
     {
         echo "IN INVENTORY ACTION \n";
+	    echo "FOR " . $this->currentPlayer;
     }
 
-    private function attackActionCheck()
+    private function attackActionCheck($args)
     {
-        if (!isset($args[2]) || trim($args[2]) == '') {
+	    echo "IN ATTACK ACTION CHECK \n";
+	    if (!isset($args[2]) || trim($args[2]) == '') {
             echo "ARGS MISSING";
         }
-        echo "IN ATTACK ACTION CHECK";
-
         return true;
     }
 
