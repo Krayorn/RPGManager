@@ -200,7 +200,7 @@ class Parser extends Template {
                 }
             }
 
-            if (isset($places['npcs'])) {
+            if (isset($place['npcs'])) {
                 foreach ($place['npcs'] as $npc) {
                     if (array_key_exists($npc['name'], $npcsEntities)) {
                         $npcsLocationsTable[$place['name'] . '_' . $npc['name']] = new NpcLocation();
