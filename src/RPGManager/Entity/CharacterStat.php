@@ -4,7 +4,7 @@ namespace RPGManager\Entity;
 
 /**
  * @Entity
- * @Table(name="character_stat")
+ * @Table(name="player_stat")
  **/
 class CharacterStat
 {

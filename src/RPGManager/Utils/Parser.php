@@ -224,7 +224,7 @@ class Parser extends Template {
             $charactersEntities[$character['name']]->setName($character['name']);
             // TODO: condition for checking description exists
             $charactersEntities[$character['name']]->setDescription($character['description']);
-            // $charactersEntities[$character['name']]->setLocation($placesEntities[$character['location']]);
+            $charactersEntities[$character['name']]->setLocation($placesEntities[$character['location']]);
 
             foreach ($character['stats'] as $stat) {
                 $charactersStatsTable[$character['name'] . '_' . $stat['name']] = new CharacterStat();

@@ -4,7 +4,7 @@ namespace RPGManager\Entity;
 
 /**
  * @Entity
- * @Table(name="playercharacter")
+ * @Table(name="player")
  **/
 class Character
 {
