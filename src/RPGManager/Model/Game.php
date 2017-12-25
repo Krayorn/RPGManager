@@ -2,7 +2,6 @@
 
 namespace RPGManager\Model;
 
-use Doctrine\ORM\Query\ResultSetMapping;
 use RPGManager\Template;
 
 class Game extends Template
@@ -104,6 +103,19 @@ class Game extends Template
 	    }
 	    return true;
     }
+    
+    private function getPlayerId() {
+	    $playerId = $this->em->createQueryBuilder()
+		    ->select('player.id')
+		    ->from('RPGManager\Entity\Character', 'player')
+		    ->where('player.name = :name')
+		    ->setParameter('name', $this->currentPlayer)
+		    ->getQuery()
+		    ->getResult()
+	    ;
+	    
+	    return $playerId[0]['id'];
+    }
 
     private function isValidAction($actionName, $args)
     {
@@ -153,8 +165,23 @@ class Game extends Template
 
     private function inventoryAction()
     {
-        echo "IN INVENTORY ACTION \n";
-	    echo "FOR " . $this->currentPlayer;
+	    $playerInventory = $this->em->createQueryBuilder()
+		    ->select('item')
+		    ->from('RPGManager\Entity\Item', 'item')
+		    ->innerJoin('RPGManager\Entity\CharacterInventory', 'inventory', 'WITH', 'item.id = inventory.item')
+		    ->where('inventory.character = :playerId')
+		    ->setParameter('playerId', $this->getPlayerId())
+		    ->getQuery()
+		    ->getResult()
+	    ;
+	    
+	    if (empty($playerInventory)) {
+	    	echo "Inventory is empty. \n";
+	    } else {
+		    foreach ($playerInventory as $playerItem) {
+			    echo $playerItem->getName() . ': ' . $playerItem->getDescription() . "\n";
+		    }
+	    }
     }
 
     private function attackActionCheck($args)
