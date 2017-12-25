@@ -2,6 +2,7 @@
 
 namespace RPGManager\Model;
 
+use RPGManager\Entity\CharacterInventory;
 use RPGManager\Template;
 
 class Game extends Template
@@ -10,6 +11,7 @@ class Game extends Template
     private $basicActions = ["move", "take", "inventory"];
     private $currentPlayer;
     private $em;
+    private $args;
 
 
     public static function getInstance()
@@ -37,8 +39,13 @@ class Game extends Template
             $handle = fopen("php://stdin","r");
             $line = fgets($handle);
             $args = explode(" ", $line);
+            $game->setArgs($args);
             $game->executePlayerAction($args, $actions);
         }
+    }
+    
+    private function setArgs($args) {
+    	$this->args = $args;
     }
     
     private function setEntityManager($entityManager) {
@@ -131,11 +138,40 @@ class Game extends Template
     private function takeActionCheck($args)
     {
 	    echo "IN TAKE ACTION CHECK \n";
+	    
 	    if (!isset($args[2]) || trim($args[2]) == '') {
             echo "ARGS MISSING";
+            return false;
         }
+        
+        if (!$this->isItemExists()) {
+	    	return false;
+        }
+        
+        // TODO: check of item is in the area of the player
+	    
         return true;
     }
+	
+	private function isItemExists() {
+		$itemName = str_replace('_', ' ', trim($this->args[2]));
+		
+		$result = $this->em->createQueryBuilder()
+			->select('item.name')
+			->from('RPGManager\Entity\Item', 'item')
+			->where('item.name = :name')
+			->setParameter('name', $itemName)
+			->getQuery()
+			->getResult()
+		;
+		
+		if (empty($result) || null == $result) {
+			echo "THIS ITEM DOES NOT EXIST. \n";
+			return false;
+		}
+		
+		return true;
+	}
 
     private function takeAction()
     {
