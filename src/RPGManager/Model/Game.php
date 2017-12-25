@@ -176,6 +176,35 @@ class Game extends Template
     private function takeAction()
     {
         echo "IN TAKE ACTION \n";
+        
+        /*
+	    $itemName = str_replace('_', ' ', trim($this->args[2]));
+	    
+	    $characterInventory[$this->currentPlayer . '_' . trim($this->args[2])] = new CharacterInventory();
+	    $characterInventory[$this->currentPlayer . '_' . trim($this->args[2])]
+		    ->setCharacter($this->em->find('RPGManager\Entity\Character', $this->getPlayerId()));
+	    $characterInventory[$this->currentPlayer . '_' . trim($this->args[2])]
+		    ->setItem($this->em->find('RPGManager\Entity\Item', $this->getItemId()));
+	    
+	    $this->em->persist($characterInventory[$this->currentPlayer . '_' . $itemName]);
+	    $this->em->flush();
+	    echo 'Item ' . $itemName . ' added to your inventory!';
+        */
+    }
+    
+    private function getItemId() {
+	    $itemName = str_replace('_', ' ', trim($this->args[2]));
+	    
+	    $itemId = $this->em->createQueryBuilder()
+		    ->select('item.id')
+		    ->from('RPGManager\Entity\Item', 'item')
+		    ->where('item.name = :name')
+		    ->setParameter('name', $itemName)
+		    ->getQuery()
+		    ->getResult()
+	    ;
+	
+	    return $itemId[0]['id'];
     }
 
     private function moveActionCheck($args)
