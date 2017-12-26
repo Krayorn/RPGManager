@@ -2,9 +2,7 @@
 
 namespace RPGManager\Model;
 
-use RPGManager\Template;
-
-class FightMode extends Template
+class FightMode extends Game
 {
     private $attacker;
     private $players;
@@ -38,6 +36,15 @@ class FightMode extends Template
         }
     }
 
+    protected function isArgValid($availableActions, $args)
+    {
+        if (!in_array(trim($args[0]), $availableActions)) {
+            echo "COMMAND NOT VALID";
+            return false;
+        }
+        return true;
+    }
+
     private function setInitiative()
     {
         // get turns number == sum of $players number and $foes number
@@ -65,17 +72,6 @@ class FightMode extends Template
                 call_user_func([$this, $value . "Action"]);
             }
         }
-    }
-
-    private function isValidAction($userAction, $actionName)
-    {
-        if (strtolower($userAction) === strtolower($actionName) || $userAction === substr($actionName, 0, 1)) {
-            if (call_user_func([$this, strtolower($userAction) . "ActionCheck"])) {
-                $this->writeAccessLog(strtolower($userAction) . "ActionCheck");
-                return true;
-            }
-        }
-        return false;
     }
 
     private function fleeActionCheck()

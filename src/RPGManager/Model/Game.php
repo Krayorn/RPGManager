@@ -5,54 +5,23 @@ namespace RPGManager\Model;
 use RPGManager\Entity\CharacterInventory;
 use RPGManager\Template;
 
-class Game extends Template
+abstract class Game extends Template
 {
-    private static $instance = null;
-    private $basicActions = ["move", "take", "inventory"];
-    private $currentPlayer;
-    private $em;
-    private $args;
+    protected $currentPlayer;
+    protected $em;
+    protected $args;
 
-
-    public static function getInstance()
+    protected function setArgs($args)
     {
-        if (self::$instance === null) {
-            self::$instance = new Game();
-        }
-        return self::$instance;
-    }
-
-    public static function startGame($entityManager)
-    {
-        $game = Game::getInstance();
-        $game->writeAccessLog("startGame()");
-	    $game->setEntityManager($entityManager);
-	
-	    while (true) {
-            $actions = $game->getAvailableActions();
-            echo "\nAVAILABLE ACTIONS:\n";
-            foreach ($actions as $value) {
-                echo $value . "  ";
-            }
-            echo "\n >> ";
-
-            $handle = fopen("php://stdin","r");
-            $line = fgets($handle);
-            $args = explode(" ", $line);
-            $game->setArgs($args);
-            $game->executePlayerAction($args, $actions);
-        }
-    }
-    
-    private function setArgs($args) {
     	$this->args = $args;
     }
-    
-    private function setEntityManager($entityManager) {
+
+    protected function setEntityManager($entityManager)
+    {
     	$this->em = $entityManager;
     }
 
-    private function getAvailableActions()
+    protected function getAvailableActions()
     {
         $this->writeAccessLog("getAvailableActions()");
 
@@ -63,13 +32,13 @@ class Game extends Template
         return $actions;
     }
 
-    private function isSomeoneInArea()
+    protected function isSomeoneInArea()
     {
         // TODO check monster and npc in area
         return true;
     }
 
-    private function executePlayerAction($args, $availableActions)
+    protected function executePlayerAction($args, $availableActions)
     {
         $this->writeAccessLog("executePlayerAction()");
 	    $this->currentPlayer = trim($args[0]);
@@ -85,16 +54,8 @@ class Game extends Template
         }
     }
 
-    private function isArgValid($availableActions, $args)
+    protected function isPlayerExist()
     {
-        if (!in_array(trim($args[1]), $availableActions)) {
-            echo "COMMAND NOT VALID";
-            return false;
-        }
-        return true;
-    }
-    
-    private function isPlayerExist() {
 	    $result = $this->em->createQueryBuilder()
 		    ->select('player.name')
 		    ->from('RPGManager\Entity\Character', 'player')
@@ -103,15 +64,16 @@ class Game extends Template
 		    ->getQuery()
 		    ->getResult()
 	    ;
-	    
+
 	    if (empty($result) || null == $result) {
 	    	echo "THIS PLAYER DOES NOT EXIST. \n";
 		    return false;
 	    }
 	    return true;
     }
-    
-    private function getPlayerId() {
+
+    protected function getPlayerId()
+    {
 	    $playerId = $this->em->createQueryBuilder()
 		    ->select('player.id')
 		    ->from('RPGManager\Entity\Character', 'player')
@@ -120,11 +82,11 @@ class Game extends Template
 		    ->getQuery()
 		    ->getResult()
 	    ;
-	    
+
 	    return $playerId[0]['id'];
     }
 
-    private function isValidAction($actionName, $args)
+    protected function isValidAction($actionName, $args)
     {
         if (strtolower(trim($args[1])) === strtolower($actionName) || trim($args[1])  === substr($actionName, 0, 1)) {
             if (call_user_func([$this, strtolower(trim($args[1])) . "ActionCheck"], $args)) {
@@ -133,143 +95,6 @@ class Game extends Template
             }
         }
         return false;
-    }
-
-    private function takeActionCheck($args)
-    {
-	    echo "IN TAKE ACTION CHECK \n";
-	    
-	    if (!isset($args[2]) || trim($args[2]) == '') {
-            echo "ARGS MISSING";
-            return false;
-        }
-        
-        if (!$this->isItemExists()) {
-	    	return false;
-        }
-        
-        // TODO: check of item is in the area of the player
-	    
-        return true;
-    }
-	
-	private function isItemExists() {
-		$itemName = str_replace('_', ' ', trim($this->args[2]));
-		
-		$result = $this->em->createQueryBuilder()
-			->select('item.name')
-			->from('RPGManager\Entity\Item', 'item')
-			->where('item.name = :name')
-			->setParameter('name', $itemName)
-			->getQuery()
-			->getResult()
-		;
-		
-		if (empty($result) || null == $result) {
-			echo "THIS ITEM DOES NOT EXIST. \n";
-			return false;
-		}
-		
-		return true;
-	}
-
-    private function takeAction()
-    {
-	    $itemName = str_replace('_', ' ', trim($this->args[2]));
-	    $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
-	    $item = $this->em->find('RPGManager\Entity\Item', $this->getItemId());
-	    
-	    $characterInventory[$this->currentPlayer . '_' . $itemName] = new CharacterInventory();
-	    $characterInventory[$this->currentPlayer . '_' . $itemName]->setCharacter($player);
-	    $characterInventory[$this->currentPlayer . '_' . $itemName]->setItem($item);
-	    
-	    $this->em->persist($characterInventory[$this->currentPlayer . '_' . $itemName]);
-	    $this->em->flush();
-	    echo 'Item ' . $itemName . ' added to your inventory!';
-     
-    }
-    
-    private function getItemId() {
-	    $itemName = str_replace('_', ' ', trim($this->args[2]));
-	    
-	    $itemId = $this->em->createQueryBuilder()
-		    ->select('item.id')
-		    ->from('RPGManager\Entity\Item', 'item')
-		    ->where('item.name = :name')
-		    ->setParameter('name', $itemName)
-		    ->getQuery()
-		    ->getResult()
-	    ;
-	
-	    return $itemId[0]['id'];
-    }
-
-    private function moveActionCheck($args)
-    {
-	    echo "IN MOVE ACTION CHECK \n";
-	    if (!isset($args[2]) || trim($args[2]) == '') {
-            echo "ARGS MISSING";
-        }
-        return true;
-    }
-
-    private function moveAction()
-    {
-        echo "IN MOVE ACTION \n";
-    }
-
-    private function inventoryActionCheck()
-    {
-        echo "IN INVENTORY ACTION CHECK \n";
-
-        return true;
-    }
-
-    private function inventoryAction()
-    {
-	    $playerInventory = $this->em->createQueryBuilder()
-		    ->select('item')
-		    ->from('RPGManager\Entity\Item', 'item')
-		    ->innerJoin('RPGManager\Entity\CharacterInventory', 'inventory', 'WITH', 'item.id = inventory.item')
-		    ->where('inventory.character = :playerId')
-		    ->setParameter('playerId', $this->getPlayerId())
-		    ->getQuery()
-		    ->getResult()
-	    ;
-	    
-	    if (empty($playerInventory)) {
-	    	echo "Inventory is empty. \n";
-	    } else {
-		    foreach ($playerInventory as $playerItem) {
-			    echo $playerItem->getName() . ': ' . $playerItem->getDescription() . "\n";
-		    }
-	    }
-    }
-
-    private function attackActionCheck($args)
-    {
-	    echo "IN ATTACK ACTION CHECK \n";
-	    if (!isset($args[2]) || trim($args[2]) == '') {
-            echo "ARGS MISSING";
-        }
-        return true;
-    }
-
-    private function attackAction()
-    {
-        echo "IN ATTACK ACTION \n";
-        $fight = new FightMode($this->currentPlayer, $this->getCharactersInArea(), $this->getFoesInArea());
-        $fight->startFight();
-    }
-
-    private function getCharactersInArea()
-    {
-
-    }
-
-    private function getFoesInArea()
-    {
-
     }
 
 }
