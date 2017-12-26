@@ -73,8 +73,8 @@ class Game extends Template
     {
         $this->writeAccessLog("executePlayerAction()");
 	    $this->currentPlayer = trim($args[0]);
-	
-	    if ($this->isPlayerExists() && $this->isArgValid($availableActions, $args)) {
+
+	    if ($this->isPlayerExist() && $this->isArgValid($availableActions, $args)) {
 	        foreach ($availableActions as $value) {
 		        if ($this->isValidAction($value, $args)) {
 			        $this->writeActionLog($this->currentPlayer . " " . trim($args[1]) . " " . trim($args[2]));
@@ -94,7 +94,7 @@ class Game extends Template
         return true;
     }
     
-    private function isPlayerExists() {
+    private function isPlayerExist() {
 	    $result = $this->em->createQueryBuilder()
 		    ->select('player.name')
 		    ->from('RPGManager\Entity\Character', 'player')
@@ -175,21 +175,18 @@ class Game extends Template
 
     private function takeAction()
     {
-        echo "IN TAKE ACTION \n";
-        
-        /*
 	    $itemName = str_replace('_', ' ', trim($this->args[2]));
+	    $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+	    $item = $this->em->find('RPGManager\Entity\Item', $this->getItemId());
 	    
-	    $characterInventory[$this->currentPlayer . '_' . trim($this->args[2])] = new CharacterInventory();
-	    $characterInventory[$this->currentPlayer . '_' . trim($this->args[2])]
-		    ->setCharacter($this->em->find('RPGManager\Entity\Character', $this->getPlayerId()));
-	    $characterInventory[$this->currentPlayer . '_' . trim($this->args[2])]
-		    ->setItem($this->em->find('RPGManager\Entity\Item', $this->getItemId()));
+	    $characterInventory[$this->currentPlayer . '_' . $itemName] = new CharacterInventory();
+	    $characterInventory[$this->currentPlayer . '_' . $itemName]->setCharacter($player);
+	    $characterInventory[$this->currentPlayer . '_' . $itemName]->setItem($item);
 	    
 	    $this->em->persist($characterInventory[$this->currentPlayer . '_' . $itemName]);
 	    $this->em->flush();
 	    echo 'Item ' . $itemName . ' added to your inventory!';
-        */
+     
     }
     
     private function getItemId() {
