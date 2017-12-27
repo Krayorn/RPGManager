@@ -130,6 +130,25 @@ class RegularMode extends Game
     protected function moveAction()
     {
         echo "IN MOVE ACTION \n";
+
+        $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+
+        $playerDestination = null;
+        foreach($player->getLocation()->getDirections() as $direction) {
+            var_dump($direction->getName());
+            var_dump($this->args);
+            if ($direction->getName() == trim($this->args[2])) {
+                $playerDestination = $direction;
+                break;
+            }
+        }
+
+        $player->setLocation($playerDestination->getPlaceArrival());
+
+        $this->em->persist($player);
+        $this->em->flush();
+
+        $this->locationAction();
     }
 
     protected function inventoryActionCheck()
@@ -184,7 +203,10 @@ class RegularMode extends Game
 
     protected function locationAction()
     {
-        echo "IN LOCATION ACTION \n";
+        $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+        echo $player->getLocation()->getName() . ': ' . $player->getLocation()->getDescription() . "\n";
+
+
     }
 
     private function getCharactersInArea()
