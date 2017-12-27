@@ -120,23 +120,35 @@ class RegularMode extends Game
 
     protected function moveActionCheck($args)
     {
-	    echo "IN MOVE ACTION CHECK \n";
 	    if (!isset($args[2]) || trim($args[2]) == '') {
-            echo "ARGS MISSING";
+            echo "You haven't precised in which place you wish to go !\n";
+            return false;
         }
-        return true;
-    }
-
-    protected function moveAction()
-    {
-        echo "IN MOVE ACTION \n";
 
         $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
 
         $playerDestination = null;
         foreach($player->getLocation()->getDirections() as $direction) {
-            var_dump($direction->getName());
-            var_dump($this->args);
+            if ($direction->getName() == trim($this->args[2])) {
+                $playerDestination = $direction;
+                break;
+            }
+        }
+
+        if ($playerDestination === null) {
+            echo "This place hasn't any direction named: " . trim($this->args[2]) . ".\n";
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function moveAction()
+    {
+        $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+
+        $playerDestination = null;
+        foreach($player->getLocation()->getDirections() as $direction) {
             if ($direction->getName() == trim($this->args[2])) {
                 $playerDestination = $direction;
                 break;
@@ -197,7 +209,6 @@ class RegularMode extends Game
 
     protected function locationActionCheck($args)
     {
-	    echo "IN LOCATION ACTION CHECK \n";
         return true;
     }
 
@@ -205,8 +216,6 @@ class RegularMode extends Game
     {
         $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
         echo $player->getLocation()->getName() . ': ' . $player->getLocation()->getDescription() . "\n";
-
-
     }
 
     private function getCharactersInArea()
