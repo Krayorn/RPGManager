@@ -6,7 +6,7 @@ class RegularMode extends Game
 {
 
     private static $instance = null;
-    protected $basicActions = ["move", "take", "inventory", "location"];
+    protected $basicActions = ["move", "take", "inventory", "location", "attack", "speak"];
 
     private static function getInstance()
     {
@@ -23,8 +23,8 @@ class RegularMode extends Game
         $game->setEntityManager($entityManager);
 
         while (true) {
-            $actions = $game->getAvailableActions();
             echo "\nAVAILABLE ACTIONS:\n";
+            $actions = $game->basicActions;
             foreach ($actions as $value) {
                 echo $value . "  ";
             }
@@ -210,6 +210,11 @@ class RegularMode extends Game
     }
 
     private function getCharactersInArea()
+    {
+
+    }
+
+    private function getNpcsInArea()
     {
 
     }

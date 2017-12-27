@@ -21,29 +21,15 @@ abstract class Game extends Template
     	$this->em = $entityManager;
     }
 
-    protected function getAvailableActions()
-    {
-        $this->writeAccessLog("getAvailableActions()");
-
-        $actions = $this->basicActions;
-        if ($this->isSomeoneInArea()) {
-            array_push($actions, 'attack');
-        }
-        return $actions;
-    }
-
-    protected function isSomeoneInArea()
-    {
-        // TODO check monster and npc in area
-        return true;
-    }
-
     protected function executePlayerAction($args, $availableActions)
     {
         $this->writeAccessLog("executePlayerAction()");
 	    $this->currentPlayer = trim($args[0]);
 
-	    if ($this->isPlayerExist() && $this->isArgValid($availableActions, $args)) {
+        // && $this->isArgValid($availableActions, $args) just commented, don't really get it, does the exact same thing as
+        // isValidAction, but stop the use of lowerCase FirstLetter for BasicAction such as aeros i for aeros inventory
+        // quite annoying TODO: Check if still needed, if not remove from FightMode AND RegularMode
+	    if ($this->isPlayerExist()) {
 	        foreach ($availableActions as $value) {
 		        if ($this->isValidAction($value, $args)) {
 			        $this->writeActionLog($this->currentPlayer . " " . trim($args[1]) . " " . trim($args[2]));
@@ -89,8 +75,8 @@ abstract class Game extends Template
     protected function isValidAction($actionName, $args)
     {
         if (strtolower(trim($args[1])) === strtolower($actionName) || trim($args[1])  === substr($actionName, 0, 1)) {
-            if (call_user_func([$this, strtolower(trim($args[1])) . "ActionCheck"], $args)) {
-                $this->writeAccessLog(strtolower(trim($args[1])) . "ActionCheck");
+            if (call_user_func([$this, $actionName . "ActionCheck"], $args)) {
+                $this->writeAccessLog($actionName . "ActionCheck");
                 return true;
             }
         }
