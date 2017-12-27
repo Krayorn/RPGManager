@@ -6,7 +6,7 @@ class RegularMode extends Game
 {
 
     private static $instance = null;
-    protected $basicActions = ["move", "take", "inventory"];
+    protected $basicActions = ["move", "take", "inventory", "location"];
 
     private static function getInstance()
     {
@@ -174,6 +174,17 @@ class RegularMode extends Game
         echo "IN ATTACK ACTION \n";
         $fight = new FightMode($this->currentPlayer, $this->getCharactersInArea(), $this->getFoesInArea());
         $fight->startFight();
+    }
+
+    protected function locationActionCheck($args)
+    {
+	    echo "IN LOCATION ACTION CHECK \n";
+        return true;
+    }
+
+    protected function locationAction()
+    {
+        echo "IN LOCATION ACTION \n";
     }
 
     private function getCharactersInArea()
