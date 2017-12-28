@@ -40,13 +40,24 @@ class RegularMode extends Game
         }
     }
 
-    protected function isArgValid($availableActions, $args)
+    private function executePlayerAction($args, $availableActions)
     {
-        if (!in_array(trim($args[1]), $availableActions)) {
-            echo "COMMAND NOT VALID";
-            return false;
+        $this->writeAccessLog("executePlayerAction()");
+        $this->currentPlayer = trim($args[0]);
+
+        if ($this->isPlayerExist()) {
+            foreach ($availableActions as $value) {
+                if ($this->isValidAction($value, $args)) {
+                    if (isset($args[2])) {
+                        $this->writeActionLog($this->currentPlayer . " " . trim($args[1]) . " " . trim($args[2]));
+                    } else {
+                        $this->writeActionLog($this->currentPlayer . " " . trim($args[1]));
+                    }
+                    $this->writeAccessLog($value . "Action");
+                    call_user_func([$this, $value . "Action"]);
+                }
+            }
         }
-        return true;
     }
 
     protected function takeActionCheck($args)
@@ -65,6 +76,17 @@ class RegularMode extends Game
         // TODO: check of item is in the area of the player
 
         return true;
+    }
+
+    protected function isValidAction($actionName, $args)
+    {
+        if (strtolower(trim($args[1])) === strtolower($actionName) || trim($args[1]) === substr($actionName, 0, 1)) {
+            if (call_user_func([$this, $actionName . "ActionCheck"], $args)) {
+                $this->writeAccessLog($actionName . "ActionCheck");
+                return true;
+            }
+        }
+        return false;
     }
 
     private function isItemExists()
@@ -203,7 +225,7 @@ class RegularMode extends Game
     protected function attackAction()
     {
         echo "IN ATTACK ACTION \n";
-        $fight = new FightMode($this->currentPlayer, $this->getCharactersInArea(), $this->getFoesInArea());
+        $fight = new FightMode($this->getCharactersInArea(), $this->getMonstersInArea());
         $fight->startFight();
     }
 
@@ -323,7 +345,17 @@ class RegularMode extends Game
 
     private function getCharactersInArea()
     {
+        $playerLocationId = $this->getPlayerLocationId();
+        $players = $this->em->createQueryBuilder()
+            ->select('player')
+            ->from('RPGManager\Entity\Character', 'player')
+            ->where('player.location = :playerLocationId')
+            ->setParameter('playerLocationId', $playerLocationId)
+            ->getQuery()
+            ->getResult()
+        ;
 
+        return $players;
     }
 
 }
