@@ -71,8 +71,9 @@ abstract class Game extends Template
 		if (empty($playerInventory)) {
 			echo "Inventory is empty. \n";
 		} else {
+			echo "\n";
 			foreach ($playerInventory as $playerItem) {
-				echo $playerItem->getItem()->getName() . ': ' . $playerItem->getItem()->getDescription() . "\n";
+				echo "• " . $playerItem->getItem()->getName() . ': ' . $playerItem->getItem()->getDescription() . "\n";
 			}
 		}
 	}

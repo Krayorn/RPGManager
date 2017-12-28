@@ -75,27 +75,25 @@ class RegularMode extends Game
 
     protected function takeActionCheck($args)
     {
-        echo "IN TAKE ACTION CHECK \n";
-
         if (!isset($args[2]) || trim($args[2]) == '') {
             echo "ARGS MISSING";
             return false;
         }
 
-        if (!$this->isItemExists()) {
+        if (!$this->isItemExist()) {
             return false;
         }
 
 	    $item = $this->em->find('RPGManager\Entity\Item', $this->getItemId());
 	    if (!in_array($item, $this->getItemsInArea())) {
-            echo "THIS ITEM IS NOT ACCESSIBLE FROM THIS AREA.";
+            echo "THIS ITEM IS NOT ACCESSIBLE FROM THIS AREA. \n";
             return false;
 	    }
 
         return true;
     }
 
-    private function isItemExists()
+    private function isItemExist()
     {
         $itemName = str_replace('_', ' ', trim($this->args[2]));
 
@@ -127,7 +125,7 @@ class RegularMode extends Game
 
         $this->em->persist($characterInventory[$this->currentPlayer . '_' . $itemName]);
         $this->em->flush();
-        echo 'Item ' . $itemName . ' added to your inventory!';
+        echo "Item " . $itemName . " added to your inventory! \n";
 
 	    $itemLocations = $player->getLocation()->getItemLocations();
 	    foreach ($itemLocations as $location) {
@@ -201,9 +199,8 @@ class RegularMode extends Game
 
     protected function attackActionCheck($args)
     {
-        echo "IN ATTACK ACTION CHECK \n";
         if (!isset($args[2]) || trim($args[2]) == '') {
-            echo "ARGS MISSING";
+            echo "ARGS MISSING \n";
         }
         return true;
     }
@@ -231,6 +228,66 @@ class RegularMode extends Game
         $this->displayNpcs();
         $this->displayItems();
     }
+	
+	private function speakActionCheck($args) {
+		if (!isset($args[2]) || trim($args[2]) == '') {
+			echo "ARGS MISSING \n";
+			return false;
+		}
+		
+		if (!$this->isNpcExist()) {
+			return false;
+		}
+		
+		$npc = $this->em->find('RPGManager\Entity\Npc', $this->getNpcId());
+		if (!in_array($npc, $this->getNpcsInArea())) {
+			echo "THIS NPC IS NOT IN THIS AREA. \n";
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private function speakAction() {
+		$npc = $this->em->find('RPGManager\Entity\Npc', $this->getNpcId());
+		echo $npc->getDialog() . "\n";
+		
+	}
+	
+	private function getNpcId()
+	{
+		$npcName = str_replace('_', ' ', trim($this->args[2]));
+		
+		$npcId = $this->em->createQueryBuilder()
+			->select('npc.id')
+			->from('RPGManager\Entity\Npc', 'npc')
+			->where('npc.name = :name')
+			->setParameter('name', $npcName)
+			->getQuery()
+			->getResult();
+		
+		return $npcId[0]['id'];
+	}
+	
+	private function isNpcExist()
+	{
+		$npcName = str_replace('_', ' ', trim($this->args[2]));
+		
+		$result = $this->em->createQueryBuilder()
+			->select('npc.name')
+			->from('RPGManager\Entity\Npc', 'npc')
+			->where('npc.name = :name')
+			->setParameter('name', $npcName)
+			->getQuery()
+			->getResult();
+		
+		if (empty($result) || null == $result) {
+			echo "THIS NPC DOES NOT EXIST. \n";
+			return false;
+		}
+		
+		return true;
+	}
 
     private function displayDirections()
     {
