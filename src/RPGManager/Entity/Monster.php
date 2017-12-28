@@ -95,7 +95,7 @@ class Monster
     {
         $this->description = $description;
     }
-	
+
 	/**
 	 * @return mixed
 	 */
@@ -103,7 +103,7 @@ class Monster
 	{
 		return $this->monsterInventories;
 	}
-	
+
 	/**
 	 * @param mixed $monsterInventories
 	 */
@@ -111,23 +111,23 @@ class Monster
 	{
 		$this->monsterInventories = $monsterInventories;
 	}
-	
+
 	/**
 	 * @return mixed
 	 */
-	public function getMonsterStats()
+	public function getStats()
 	{
 		return $this->monsterStats;
 	}
-	
+
 	/**
 	 * @param mixed $monsterStats
 	 */
-	public function setMonsterStats($monsterStats)
+	public function setStats($monsterStats)
 	{
 		$this->monsterStats = $monsterStats;
 	}
-	
+
 	/**
 	 * @return mixed
 	 */
@@ -135,7 +135,7 @@ class Monster
 	{
 		return $this->monsterSpells;
 	}
-	
+
 	/**
 	 * @param mixed $monsterSpells
 	 */
@@ -143,7 +143,7 @@ class Monster
 	{
 		$this->monsterSpells = $monsterSpells;
 	}
-	
+
 	/**
 	 * @return mixed
 	 */
@@ -151,7 +151,7 @@ class Monster
 	{
 		return $this->monsterLocations;
 	}
-	
+
 	/**
 	 * @param mixed $monsterLocations
 	 */

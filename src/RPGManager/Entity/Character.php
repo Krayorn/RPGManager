@@ -116,7 +116,7 @@ class Character
 	/**
 	 * @return mixed
 	 */
-	public function getCharacterStats()
+	public function getStats()
 	{
 		return $this->characterStats;
 	}
@@ -124,7 +124,7 @@ class Character
 	/**
 	 * @param mixed $characterStats
 	 */
-	public function setCharacterStats($characterStats)
+	public function setStats($characterStats)
 	{
 		$this->characterStats = $characterStats;
 	}

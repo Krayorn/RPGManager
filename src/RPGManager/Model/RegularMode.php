@@ -18,11 +18,13 @@ class RegularMode extends Game
         return self::$instance;
     }
 
-    public static function startGame($entityManager)
+    public static function startGame($entityManager, $settings)
     {
         $game = RegularMode::getInstance();
+
         $game->writeAccessLog("startGame()");
         $game->setEntityManager($entityManager);
+        $game::$settings = $settings;
 
         while (true) {
             echo "\nAVAILABLE ACTIONS:\n";
@@ -60,6 +62,17 @@ class RegularMode extends Game
         }
     }
 
+	protected function isValidAction($actionName, $args)
+	{
+		if (strtolower(trim($args[1])) === strtolower($actionName) || trim($args[1]) === substr($actionName, 0, 1)) {
+			if (call_user_func([$this, $actionName . "ActionCheck"], $args)) {
+				$this->writeAccessLog($actionName . "ActionCheck");
+				return true;
+			}
+		}
+		return false;
+	}
+
     protected function takeActionCheck($args)
     {
         echo "IN TAKE ACTION CHECK \n";
@@ -73,20 +86,13 @@ class RegularMode extends Game
             return false;
         }
 
-        // TODO: check of item is in the area of the player
+	    $item = $this->em->find('RPGManager\Entity\Item', $this->getItemId());
+	    if (!in_array($item, $this->getItemsInArea())) {
+            echo "THIS ITEM IS NOT ACCESSIBLE FROM THIS AREA.";
+            return false;
+	    }
 
         return true;
-    }
-
-    protected function isValidAction($actionName, $args)
-    {
-        if (strtolower(trim($args[1])) === strtolower($actionName) || trim($args[1]) === substr($actionName, 0, 1)) {
-            if (call_user_func([$this, $actionName . "ActionCheck"], $args)) {
-                $this->writeAccessLog($actionName . "ActionCheck");
-                return true;
-            }
-        }
-        return false;
     }
 
     private function isItemExists()
@@ -122,6 +128,14 @@ class RegularMode extends Game
         $this->em->persist($characterInventory[$this->currentPlayer . '_' . $itemName]);
         $this->em->flush();
         echo 'Item ' . $itemName . ' added to your inventory!';
+
+	    $itemLocations = $player->getLocation()->getItemLocations();
+	    foreach ($itemLocations as $location) {
+	    	if ($location->getItem()->getId() == $this->getItemId()) {
+	    		$this->em->remove($location);
+	    		$this->em->flush();
+		    }
+	    }
 
     }
 
@@ -184,25 +198,6 @@ class RegularMode extends Game
 
         $this->locationAction();
     }
-
-    protected function inventoryActionCheck()
-    {
-        return true;
-    }
-	
-	protected function inventoryAction()
-	{
-		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
-		$playerInventory = $player->getCharacterInventories();
-		
-		if (empty($playerInventory)) {
-			echo "Inventory is empty. \n";
-		} else {
-			foreach ($playerInventory as $playerItem) {
-				echo $playerItem->getItem()->getName() . ': ' . $playerItem->getItem()->getDescription() . "\n";
-			}
-		}
-	}
 
     protected function attackActionCheck($args)
     {
@@ -298,11 +293,11 @@ class RegularMode extends Game
 		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
 		$monsterLocations = $player->getLocation()->getMonsterLocations();
 		$monsters = [];
-		
+
 		foreach ($monsterLocations as $location) {
 			array_push($monsters, $location->getMonster());
 		}
-		
+
 		return $monsters;
 	}
 
@@ -334,43 +329,43 @@ class RegularMode extends Game
 
         return $foes;
     }
-	
+
 	private function getNpcsInArea()
 	{
 		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
 		$npcLocations = $player->getLocation()->getNpcLocations();
 		$npcs = [];
-		
+
 		foreach ($npcLocations as $location) {
 			array_push($npcs, $location->getNpc());
 		}
-		
+
 		return $npcs;
 	}
-	
+
 	private function getItemsInArea()
 	{
 		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
 		$itemLocations = $player->getLocation()->getItemLocations();
 		$items = [];
-		
+
 		foreach ($itemLocations as $location) {
 			array_push($items, $location->getItem());
 		}
-		
+
 		return $items;
 	}
-	
+
 	private function getCharactersInArea()
 	{
 		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
-		$playerLocations = $player->getLocation()->getCharacterLocations();
+		$playerLocations = $player->getLocation()->getCharacters();
 		$players = [];
-		
-		foreach ($playerLocations as $location) {
-			array_push($players, $location->getCharacter());
+
+		foreach ($playerLocations as $character) {
+			array_push($players, $character);
 		}
-		
+
 		return $players;
 	}
 
