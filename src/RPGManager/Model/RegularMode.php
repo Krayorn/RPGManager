@@ -2,6 +2,8 @@
 
 namespace RPGManager\Model;
 
+use RPGManager\Entity\CharacterInventory;
+
 class RegularMode extends Game
 {
 
@@ -215,23 +217,65 @@ class RegularMode extends Game
         $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
         echo "\n";
         echo $player->getLocation()->getName() . ': ' . $player->getLocation()->getDescription() . "\n\n";
+
         $this->displayDirections();
         $this->displayMonsters();
+        $this->displayNpcs();
+        $this->displayItems();
     }
 
     private function displayDirections(){
         $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
         $directions = $player->getLocation()->getDirections();
-        echo "• Available directions :";
+        echo "• Available direction(s) :";
         foreach ($directions as $direction){
-            echo " - " . $direction->getName();
+            echo "\n - " . $direction->getName();
         }
         echo "\n";
     }
 
     private function displayMonsters(){
-        $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
-        $playerLocationId = $player->getLocation()->getId();
+        $monsters = $this->getMonstersInArea();
+        if (empty($monsters)) {
+            echo "• Ennemy in this place : There's no threat here.";
+        } else {
+            echo "• Ennemy in this place :";
+            foreach ($monsters as $monster){
+                echo "\n - " . $monster->getName();
+            }
+        }
+        echo "\n";
+    }
+
+    private function displayNpcs(){
+        $npcs = $this->getNpcsInArea();
+        if (empty($npcs)) {
+            echo "• Npc(s) in this place : There's no one here.";
+        } else {
+            echo "• Npc(s) in this place :";
+            foreach ($npcs as $npc){
+                echo "\n - " . $npc->getName() . " : " . $npc->getDescription();
+            }
+        }
+        echo "\n";
+    }
+
+    private function displayItems(){
+        $items = $this->getItemsInArea();
+        if (empty($items)) {
+            echo "• Item(s) in this place : There's no item(s) here.";
+        } else {
+            echo "• Item(s) in this place :";
+            foreach ($items as $item){
+                echo "\n - " . $item->getName() . " : " . $item->getDescription();
+            }
+        }
+        echo "\n";
+    }
+
+    private function getMonstersInArea()
+    {
+        $playerLocationId = $this->getPlayerLocationId();
         $monsters = $this->em->createQueryBuilder()
             ->select('monster')
             ->from('RPGManager\Entity\Monster', 'monster')
@@ -241,15 +285,40 @@ class RegularMode extends Game
             ->getQuery()
             ->getResult()
         ;
-        if (empty($monsters)) {
-            echo "• Ennemy in this place : There's no threat here. \n";
-        } else {
-            echo "• Ennemy in this place :";
-            foreach ($monsters as $monster){
-                echo " - " . $monster->getName();
-            }
-        }
-        echo "\n";
+
+        return $monsters;
+    }
+
+    private function getNpcsInArea()
+    {
+        $playerLocationId = $this->getPlayerLocationId();
+        $npcs = $this->em->createQueryBuilder()
+            ->select('npc')
+            ->from('RPGManager\Entity\Npc', 'npc')
+            ->innerJoin('RPGManager\Entity\NpcLocation', 'location', 'WITH', 'npc.id = location.npc')
+            ->where('location.place = :npcLocationId')
+            ->setParameter('npcLocationId', $playerLocationId)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        return $npcs;
+    }
+
+    private function getItemsInArea()
+    {
+        $playerLocationId = $this->getPlayerLocationId();
+        $items = $this->em->createQueryBuilder()
+            ->select('item')
+            ->from('RPGManager\Entity\Item', 'item')
+            ->innerJoin('RPGManager\Entity\ItemLocation', 'location', 'WITH', 'item.id = location.item')
+            ->where('location.place = :itemLocationId')
+            ->setParameter('itemLocationId', $playerLocationId)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        return $items;
     }
 
     private function getCharactersInArea()
@@ -257,13 +326,4 @@ class RegularMode extends Game
 
     }
 
-    private function getNpcsInArea()
-    {
-
-    }
-
-    private function getFoesInArea()
-    {
-
-    }
 }
