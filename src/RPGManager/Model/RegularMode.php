@@ -189,26 +189,20 @@ class RegularMode extends Game
     {
         return true;
     }
-
-    protected function inventoryAction()
-    {
-        $playerInventory = $this->em->createQueryBuilder()
-            ->select('item')
-            ->from('RPGManager\Entity\Item', 'item')
-            ->innerJoin('RPGManager\Entity\CharacterInventory', 'inventory', 'WITH', 'item.id = inventory.item')
-            ->where('inventory.character = :playerId')
-            ->setParameter('playerId', $this->getPlayerId())
-            ->getQuery()
-            ->getResult();
-
-        if (empty($playerInventory)) {
-            echo "Inventory is empty. \n";
-        } else {
-            foreach ($playerInventory as $playerItem) {
-                echo $playerItem->getName() . ': ' . $playerItem->getDescription() . "\n";
-            }
-        }
-    }
+	
+	protected function inventoryAction()
+	{
+		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+		$playerInventory = $player->getCharacterInventories();
+		
+		if (empty($playerInventory)) {
+			echo "Inventory is empty. \n";
+		} else {
+			foreach ($playerInventory as $playerItem) {
+				echo $playerItem->getItem()->getName() . ': ' . $playerItem->getItem()->getDescription() . "\n";
+			}
+		}
+	}
 
     protected function attackActionCheck($args)
     {
@@ -297,20 +291,18 @@ class RegularMode extends Game
         echo "\n";
     }
 
-    private function getMonstersInArea()
-    {
-        $playerLocationId = $this->getPlayerLocationId();
-        $monsters = $this->em->createQueryBuilder()
-            ->select('monster')
-            ->from('RPGManager\Entity\Monster', 'monster')
-            ->innerJoin('RPGManager\Entity\MonsterLocation', 'location', 'WITH', 'monster.id = location.monster')
-            ->where('location.place = :playerLocationId')
-            ->setParameter('playerLocationId', $playerLocationId)
-            ->getQuery()
-            ->getResult();
-
-        return $monsters;
-    }
+	private function getMonstersInArea()
+	{
+		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+		$monsterLocations = $player->getLocation()->getMonsterLocations();
+		$monsters = [];
+		
+		foreach ($monsterLocations as $location) {
+			array_push($monsters, $location->getMonster());
+		}
+		
+		return $monsters;
+	}
 
     private function getNumbersOfMonstersInArea()
     {
@@ -335,50 +327,44 @@ class RegularMode extends Game
 
         return $data;
     }
-
-    private function getNpcsInArea()
-    {
-        $playerLocationId = $this->getPlayerLocationId();
-        $npcs = $this->em->createQueryBuilder()
-            ->select('npc')
-            ->from('RPGManager\Entity\Npc', 'npc')
-            ->innerJoin('RPGManager\Entity\NpcLocation', 'location', 'WITH', 'npc.id = location.npc')
-            ->where('location.place = :playerLocationId')
-            ->setParameter('playerLocationId', $playerLocationId)
-            ->getQuery()
-            ->getResult();
-
-        return $npcs;
-    }
-
-    private function getItemsInArea()
-    {
-        $playerLocationId = $this->getPlayerLocationId();
-        $items = $this->em->createQueryBuilder()
-            ->select('item')
-            ->from('RPGManager\Entity\Item', 'item')
-            ->innerJoin('RPGManager\Entity\ItemLocation', 'location', 'WITH', 'item.id = location.item')
-            ->where('location.place = :playerLocationId')
-            ->setParameter('playerLocationId', $playerLocationId)
-            ->getQuery()
-            ->getResult();
-
-        return $items;
-    }
-
-    private function getCharactersInArea()
-    {
-        $playerLocationId = $this->getPlayerLocationId();
-        $players = $this->em->createQueryBuilder()
-            ->select('player')
-            ->from('RPGManager\Entity\Character', 'player')
-            ->where('player.location = :playerLocationId')
-            ->setParameter('playerLocationId', $playerLocationId)
-            ->getQuery()
-            ->getResult()
-        ;
-
-        return $players;
-    }
+	
+	private function getNpcsInArea()
+	{
+		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+		$npcLocations = $player->getLocation()->getNpcLocations();
+		$npcs = [];
+		
+		foreach ($npcLocations as $location) {
+			array_push($npcs, $location->getNpc());
+		}
+		
+		return $npcs;
+	}
+	
+	private function getItemsInArea()
+	{
+		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+		$itemLocations = $player->getLocation()->getItemLocations();
+		$items = [];
+		
+		foreach ($itemLocations as $location) {
+			array_push($items, $location->getItem());
+		}
+		
+		return $items;
+	}
+	
+	private function getCharactersInArea()
+	{
+		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+		$playerLocations = $player->getLocation()->getCharacterLocations();
+		$players = [];
+		
+		foreach ($playerLocations as $location) {
+			array_push($players, $location->getCharacter());
+		}
+		
+		return $players;
+	}
 
 }
