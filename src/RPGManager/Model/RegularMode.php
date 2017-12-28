@@ -213,7 +213,43 @@ class RegularMode extends Game
     protected function locationAction()
     {
         $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
-        echo $player->getLocation()->getName() . ': ' . $player->getLocation()->getDescription() . "\n";
+        echo "\n";
+        echo $player->getLocation()->getName() . ': ' . $player->getLocation()->getDescription() . "\n\n";
+        $this->displayDirections();
+        $this->displayMonsters();
+    }
+
+    private function displayDirections(){
+        $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+        $directions = $player->getLocation()->getDirections();
+        echo "• Available directions :";
+        foreach ($directions as $direction){
+            echo " - " . $direction->getName();
+        }
+        echo "\n";
+    }
+
+    private function displayMonsters(){
+        $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+        $playerLocationId = $player->getLocation()->getId();
+        $monsters = $this->em->createQueryBuilder()
+            ->select('monster')
+            ->from('RPGManager\Entity\Monster', 'monster')
+            ->innerJoin('RPGManager\Entity\MonsterLocation', 'location', 'WITH', 'monster.id = location.monster')
+            ->where('location.place = :monsterLocationId')
+            ->setParameter('monsterLocationId', $playerLocationId)
+            ->getQuery()
+            ->getResult()
+        ;
+        if (empty($monsters)) {
+            echo "• Ennemy in this place : There's no threat here. \n";
+        } else {
+            echo "• Ennemy in this place :";
+            foreach ($monsters as $monster){
+                echo " - " . $monster->getName();
+            }
+        }
+        echo "\n";
     }
 
     private function getCharactersInArea()
