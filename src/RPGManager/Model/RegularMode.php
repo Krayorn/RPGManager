@@ -18,11 +18,13 @@ class RegularMode extends Game
         return self::$instance;
     }
 
-    public static function startGame($entityManager)
+    public static function startGame($entityManager, $settings)
     {
         $game = RegularMode::getInstance();
+
         $game->writeAccessLog("startGame()");
         $game->setEntityManager($entityManager);
+        $game::$settings = $settings;
 
         while (true) {
             echo "\nAVAILABLE ACTIONS:\n";
@@ -189,12 +191,12 @@ class RegularMode extends Game
     {
         return true;
     }
-	
+
 	protected function inventoryAction()
 	{
 		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
 		$playerInventory = $player->getCharacterInventories();
-		
+
 		if (empty($playerInventory)) {
 			echo "Inventory is empty. \n";
 		} else {
@@ -296,11 +298,11 @@ class RegularMode extends Game
 		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
 		$monsterLocations = $player->getLocation()->getMonsterLocations();
 		$monsters = [];
-		
+
 		foreach ($monsterLocations as $location) {
 			array_push($monsters, $location->getMonster());
 		}
-		
+
 		return $monsters;
 	}
 
@@ -327,43 +329,43 @@ class RegularMode extends Game
 
         return $data;
     }
-	
+
 	private function getNpcsInArea()
 	{
 		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
 		$npcLocations = $player->getLocation()->getNpcLocations();
 		$npcs = [];
-		
+
 		foreach ($npcLocations as $location) {
 			array_push($npcs, $location->getNpc());
 		}
-		
+
 		return $npcs;
 	}
-	
+
 	private function getItemsInArea()
 	{
 		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
 		$itemLocations = $player->getLocation()->getItemLocations();
 		$items = [];
-		
+
 		foreach ($itemLocations as $location) {
 			array_push($items, $location->getItem());
 		}
-		
+
 		return $items;
 	}
-	
+
 	private function getCharactersInArea()
 	{
 		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
-		$playerLocations = $player->getLocation()->getCharacterLocations();
+		$playerLocations = $player->getLocation()->getCharacters();
 		$players = [];
-		
-		foreach ($playerLocations as $location) {
-			array_push($players, $location->getCharacter());
+
+		foreach ($playerLocations as $character) {
+			array_push($players, $character);
 		}
-		
+
 		return $players;
 	}
 

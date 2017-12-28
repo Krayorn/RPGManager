@@ -31,12 +31,32 @@ class FightMode extends Game
         }
     }
 
+    private function sortByCarac($a, $b) {
+        foreach($a->getStats() as $stat) {
+            if ($stat->getStat()->getName() === $this::$settings['initiativeCarac']) {
+                $aValue = $stat->getStat()->getValue();
+            }
+        }
+
+        foreach($b->getStats() as $stat) {
+            if ($stat->getStat()->getName() === $this::$settings['initiativeCarac']) {
+                $bValue = $stat->getStat()->getValue();
+            }
+        }
+
+        return ($bValue < $aValue) ? -1 : 1;
+    }
+
     private function setInitiative()
     {
+
         $fighters = array_merge($this->players, $this->foes);
 
-        shuffle($fighters);
-
+        if($this::$settings['initiativeCarac'] !== null) {
+            usort($fighters, array($this, 'sortByCarac'));
+        } else {
+            shuffle($fighters);
+        }
         $this->fighters = $fighters;
 
         foreach($fighters as $fighter) {

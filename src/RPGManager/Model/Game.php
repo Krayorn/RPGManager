@@ -9,6 +9,7 @@ abstract class Game extends Template
     protected $currentPlayer;
     protected $em;
     protected $args;
+    static protected $settings;
 
     protected function setArgs($args)
     {
