@@ -57,5 +57,24 @@ abstract class Game extends Template
 
         return $playerLocationId;
     }
+	
+	protected function inventoryActionCheck()
+	{
+		return true;
+	}
+	
+	protected function inventoryAction()
+	{
+		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+		$playerInventory = $player->getCharacterInventories();
+		
+		if (empty($playerInventory)) {
+			echo "Inventory is empty. \n";
+		} else {
+			foreach ($playerInventory as $playerItem) {
+				echo $playerItem->getItem()->getName() . ': ' . $playerItem->getItem()->getDescription() . "\n";
+			}
+		}
+	}
 
 }

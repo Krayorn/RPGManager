@@ -62,6 +62,17 @@ class RegularMode extends Game
         }
     }
 
+	protected function isValidAction($actionName, $args)
+	{
+		if (strtolower(trim($args[1])) === strtolower($actionName) || trim($args[1]) === substr($actionName, 0, 1)) {
+			if (call_user_func([$this, $actionName . "ActionCheck"], $args)) {
+				$this->writeAccessLog($actionName . "ActionCheck");
+				return true;
+			}
+		}
+		return false;
+	}
+
     protected function takeActionCheck($args)
     {
         echo "IN TAKE ACTION CHECK \n";
@@ -75,20 +86,13 @@ class RegularMode extends Game
             return false;
         }
 
-        // TODO: check of item is in the area of the player
+	    $item = $this->em->find('RPGManager\Entity\Item', $this->getItemId());
+	    if (!in_array($item, $this->getItemsInArea())) {
+            echo "THIS ITEM IS NOT ACCESSIBLE FROM THIS AREA.";
+            return false;
+	    }
 
         return true;
-    }
-
-    protected function isValidAction($actionName, $args)
-    {
-        if (strtolower(trim($args[1])) === strtolower($actionName) || trim($args[1]) === substr($actionName, 0, 1)) {
-            if (call_user_func([$this, $actionName . "ActionCheck"], $args)) {
-                $this->writeAccessLog($actionName . "ActionCheck");
-                return true;
-            }
-        }
-        return false;
     }
 
     private function isItemExists()
@@ -124,6 +128,14 @@ class RegularMode extends Game
         $this->em->persist($characterInventory[$this->currentPlayer . '_' . $itemName]);
         $this->em->flush();
         echo 'Item ' . $itemName . ' added to your inventory!';
+
+	    $itemLocations = $player->getLocation()->getItemLocations();
+	    foreach ($itemLocations as $location) {
+	    	if ($location->getItem()->getId() == $this->getItemId()) {
+	    		$this->em->remove($location);
+	    		$this->em->flush();
+		    }
+	    }
 
     }
 
@@ -187,25 +199,6 @@ class RegularMode extends Game
         $this->locationAction();
     }
 
-    protected function inventoryActionCheck()
-    {
-        return true;
-    }
-
-	protected function inventoryAction()
-	{
-		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
-		$playerInventory = $player->getCharacterInventories();
-
-		if (empty($playerInventory)) {
-			echo "Inventory is empty. \n";
-		} else {
-			foreach ($playerInventory as $playerItem) {
-				echo $playerItem->getItem()->getName() . ': ' . $playerItem->getItem()->getDescription() . "\n";
-			}
-		}
-	}
-
     protected function attackActionCheck($args)
     {
         echo "IN ATTACK ACTION CHECK \n";
@@ -258,7 +251,7 @@ class RegularMode extends Game
             echo "• Ennemy in this place : There's no threat here.";
         } else {
             echo "• Ennemy in this place :";
-            foreach($numberOfMonsters as $numberOfMonster){
+            foreach($numberOfMonsters as $numberOfMonster) {
                 echo "\n - " . $numberOfMonster[0] . "(" . $numberOfMonster[1] . ")";
             }
         }
