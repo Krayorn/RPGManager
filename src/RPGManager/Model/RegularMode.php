@@ -255,9 +255,11 @@ class RegularMode extends Game
         if (empty($monsters)) {
             echo "• Ennemy in this place : There's no threat here.";
         } else {
-            echo "• Ennemy in this place :";
-            foreach($numberOfMonsters as $numberOfMonster){
-                echo "\n - " . $numberOfMonster[0] . "(" . $numberOfMonster[1] . ")";
+            echo "• Monster(s) in this place :";
+            $c = 0;
+            foreach ($monsters as $monster){
+                echo "\n - " . $monster->getName() . "(" . $numberOfMonsters[$c] . ")";
+                $c++;
             }
         }
         echo "\n";
@@ -306,26 +308,31 @@ class RegularMode extends Game
 
     private function getNumbersOfMonstersInArea()
     {
-        $playerLocationId = $this->getPlayerLocationId();
-        $data = [];
-        $numberOfMonsters = $this->em->createQueryBuilder()
-            ->select('number')
-            ->from('RPGManager\Entity\MonsterLocation', 'number')
-            ->where('number.place = :playerLocationId')
-            ->setParameter('playerLocationId', $playerLocationId)
-            ->getQuery()
-            ->getResult();
+        $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+        $monsterLocations = $player->getLocation()->getMonsterLocations();
+        $numberOfMonsters = [];
+
+        foreach ($monsterLocations as $location) {
+            array_push($numberOfMonsters, $location->getNumber());
+        }
+        return $numberOfMonsters;
+    }
+
+    private function getFoes()
+    {
+        $monsters = $this->getMonstersInArea();
+        $numberOfMonsters = $this->getNumbersOfMonstersInArea();
+        $foes = [];
 
         $c = 0;
-        foreach ($numberOfMonsters as $numberOfMonster){
-            $data[$c] = [
-                $numberOfMonster->getMonster()->getName(),
-                $numberOfMonster->getNumber()
-            ];
+        foreach ($monsters as $monster){
+            for ($i = 0; $i < $numberOfMonsters[$c]; $i++){
+                array_push($foes, $monster->getName());
+            }
             $c++;
         }
 
-        return $data;
+        return $foes;
     }
 	
 	private function getNpcsInArea()
