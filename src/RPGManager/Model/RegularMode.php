@@ -165,8 +165,6 @@ class RegularMode extends Game
 
     protected function inventoryActionCheck()
     {
-        echo "IN INVENTORY ACTION CHECK \n";
-
         return true;
     }
 

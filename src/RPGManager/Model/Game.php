@@ -32,7 +32,11 @@ abstract class Game extends Template
 	    if ($this->isPlayerExist()) {
 	        foreach ($availableActions as $value) {
 		        if ($this->isValidAction($value, $args)) {
-			        $this->writeActionLog($this->currentPlayer . " " . trim($args[1]) . " " . trim($args[2]));
+                    if (isset($args[2])) {
+                        $this->writeActionLog($this->currentPlayer . " " . trim($args[1]) . " " . trim($args[2]));
+                    } else {
+                        $this->writeActionLog($this->currentPlayer . " " . trim($args[1]));
+                    }
 			        $this->writeAccessLog($value . "Action");
 			        call_user_func([$this, $value . "Action"]);
 		        }
