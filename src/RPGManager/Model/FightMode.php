@@ -163,9 +163,6 @@ class FightMode extends Game
         $damages = $this->currentSpell->getSpellStats();
         $statToMinus = $this::$settings['statForHealth'];
 
-        echo $this->currentTarget->getName() . " is going to be hurt on " . $statToMinus . "\n";
-        echo "Current Value: " . $this->currentTarget->getTemporaryStats()[$statToMinus] . "\n";
-
         foreach($damages as $damage) {
             $damage = $damage->getStat();
 
@@ -174,9 +171,7 @@ class FightMode extends Game
             $stats[$statToMinus] = $stats[$statToMinus] - $damage->getValue();
             echo $this->currentTarget->getName() . " took " . $damage->getValue() . " " . $damage->getName() . "\n";
         }
-
         $this->currentTarget->setTemporaryStats($stats);
-        echo "Remaining Value Value: " .$stats[$statToMinus] . "\n";
 
         if ($this->currentTarget->getTemporaryStats()[$statToMinus] <= 0) {
                 echo "unset";
@@ -219,7 +214,7 @@ class FightMode extends Game
         $spells = $this->currentFighter->getCharacterSpells();
 
         foreach ($spells as $spell) {
-            if ($spellName == $spell->getSpell()->getName()) {
+            if ( strtolower($spellName) == strtolower($spell->getSpell()->getName())) {
                 $this->currentSpell = $spell->getSpell();
                 return true;
             }
@@ -233,7 +228,7 @@ class FightMode extends Game
         $targetName = str_replace('_', ' ', $targetName);
 
         foreach($this->fighters as $fighter) {
-            if ($targetName === $fighter->getName()) {
+            if (strtolower($targetName) === strtolower($fighter->getName())) {
                 $spellType = $this->currentSpell->getType();
                 if ((in_array($fighter, $this->foes) && ($spellType == 'debuff' || $spellType == 'damage'))
                     ||(in_array($fighter, $this->players) && ($spellType == 'heal' || $spellType == 'buff'))) {
