@@ -208,7 +208,7 @@ class RegularMode extends Game
     protected function attackAction()
     {
         echo "IN ATTACK ACTION \n";
-        $fight = new FightMode($this->getCharactersInArea(), $this->getMonstersInArea());
+        $fight = new FightMode($this->getCharactersInArea(), $this->getFoes(), $this->em);
         $fight->startFight();
     }
 
@@ -228,36 +228,35 @@ class RegularMode extends Game
         $this->displayNpcs();
         $this->displayItems();
     }
-	
+
 	private function speakActionCheck($args) {
 		if (!isset($args[2]) || trim($args[2]) == '') {
 			echo "ARGS MISSING \n";
 			return false;
 		}
-		
+
 		if (!$this->isNpcExist()) {
 			return false;
 		}
-		
+
 		$npc = $this->em->find('RPGManager\Entity\Npc', $this->getNpcId());
 		if (!in_array($npc, $this->getNpcsInArea())) {
 			echo "THIS NPC IS NOT IN THIS AREA. \n";
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	private function speakAction() {
 		$npc = $this->em->find('RPGManager\Entity\Npc', $this->getNpcId());
 		echo $npc->getDialog() . "\n";
-		
 	}
-	
+
 	private function getNpcId()
 	{
 		$npcName = str_replace('_', ' ', trim($this->args[2]));
-		
+
 		$npcId = $this->em->createQueryBuilder()
 			->select('npc.id')
 			->from('RPGManager\Entity\Npc', 'npc')
@@ -265,14 +264,14 @@ class RegularMode extends Game
 			->setParameter('name', $npcName)
 			->getQuery()
 			->getResult();
-		
+
 		return $npcId[0]['id'];
 	}
-	
+
 	private function isNpcExist()
 	{
 		$npcName = str_replace('_', ' ', trim($this->args[2]));
-		
+
 		$result = $this->em->createQueryBuilder()
 			->select('npc.name')
 			->from('RPGManager\Entity\Npc', 'npc')
@@ -280,12 +279,12 @@ class RegularMode extends Game
 			->setParameter('name', $npcName)
 			->getQuery()
 			->getResult();
-		
+
 		if (empty($result) || null == $result) {
 			echo "THIS NPC DOES NOT EXIST. \n";
 			return false;
 		}
-		
+
 		return true;
 	}
 
@@ -379,7 +378,7 @@ class RegularMode extends Game
         $c = 0;
         foreach ($monsters as $monster){
             for ($i = 0; $i < $numberOfMonsters[$c]; $i++){
-                array_push($foes, $monster->getName());
+                array_push($foes, $monster);
             }
             $c++;
         }

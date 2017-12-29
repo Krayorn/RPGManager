@@ -7,11 +7,14 @@ class FightMode extends Game
     private $players;
     private $foes;
     private $basicActions = ['flee', 'skills', 'inventory'];
+    private $currentFighter;
+    private $fighters;
 
-    public function __construct($players, $foes)
+    public function __construct($players, $foes, $entityManager)
     {
         $this->players = $players;
         $this->foes = $foes;
+        $this->setEntityManager($entityManager);
     }
 
     public function startFight()
@@ -108,16 +111,21 @@ class FightMode extends Game
                 $this->writeAccessLog($value . "Action");
 
                 call_user_func([$this, $value . "Action"]);
+
+                if(in_array($value, ['skills', 'inventory'])) {
+                    $this->resolvePlayerTurn();
+                }
             }
         }
 
         if(!$actionDone) {
             if ($this->isASpell($args)) {
-
                 $actionDone = true;
 
                 $this->writeActionLog($this->currentFighter->getName() . " use " . trim($args[0]) . " on " . trim($args[1]));
                 $this->writeAccessLog($value . "Action");
+
+                $this->executeFighterSpell(trim($args[0]), trim($args[1]));
             }
         }
 
@@ -125,6 +133,10 @@ class FightMode extends Game
             echo "We don't know what you just did, plz use something that make sense you moron \n";
             $this->resolvePlayerTurn();
         }
+
+    }
+
+    private function execureFighterSpell($spellName, $targetName) {
 
     }
 
@@ -140,12 +152,13 @@ class FightMode extends Game
     }
 
     protected function isASpell($args) {
-        echo trim($args[0]) . "\n";
+
+        $spellName = str_replace('_', ' ', trim($args[0]));
+
         $spells = $this->currentFighter->getCharacterSpells();
 
         foreach($spells as $spell) {
-            echo $spell->getSpell()->getName() . "\n";
-            if (trim($args[0]) == $spell->getSpell()->getName()) {
+            if ($spellName == $spell->getSpell()->getName()) {
                 return true;
             }
         }
@@ -176,7 +189,9 @@ class FightMode extends Game
 
     private function skillsAction()
     {
-
-        echo "IN SKILLS ACTION \n";
+        $spells = $this->currentFighter->getCharacterSpells();
+        foreach($spells as $spell) {
+            echo $spell->getSpell()->getName() . ": " . $spell->getSpell()->getDescription() . "\n";
+        }
     }
 }
