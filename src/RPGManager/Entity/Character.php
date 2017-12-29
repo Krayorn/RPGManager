@@ -8,6 +8,8 @@ namespace RPGManager\Entity;
  **/
 class Character
 {
+    private $temporaryStats;
+
     /**
      * @var int
      * @Column(name="id", type="integer")
@@ -159,6 +161,16 @@ class Character
 	public function setLocation($location)
 	{
 		$this->location = $location;
+    }
+
+	public function getTemporaryStats()
+	{
+		return $this->temporaryStats;
+	}
+
+	public function setTemporaryStats($temporaryStats)
+	{
+		$this->temporaryStats = $temporaryStats;
 	}
 
 }

@@ -163,4 +163,14 @@ class Monster
 		$this->monsterLocations = $monsterLocations;
 	}
 
+	public function getTemporaryStats()
+	{
+		return $this->temporaryStats;
+	}
+
+	public function setTemporaryStats($temporaryStats)
+	{
+		$this->temporaryStats = $temporaryStats;
+	}
+
 }

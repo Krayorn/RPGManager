@@ -17,6 +17,27 @@ class FightMode extends Game
         $this->players = $players;
         $this->foes = $foes;
         $this->setEntityManager($entityManager);
+
+        $this->fillTemporaryStatsArray();
+    }
+
+    private function fillTemporaryStatsArray()
+    {
+        foreach ($this->players as $player) {
+            $temporaryStats = [];
+            foreach($player->getStats() as $stat){
+                $temporaryStats[$stat->getStat()->getName()] = $stat->getStat()->getValue();
+            }
+            $player->setTemporaryStats($temporaryStats);
+        }
+
+        foreach ($this->foes as $foe) {
+            $temporaryStats = [];
+            foreach($foe->getStats() as $stat){
+                $temporaryStats[$stat->getStat()->getName()] = $stat->getStat()->getValue();
+            }
+            $foe->setTemporaryStats($temporaryStats);
+        }
     }
 
     public function startFight()
@@ -65,12 +86,6 @@ class FightMode extends Game
             shuffle($fighters);
         }
         $this->fighters = $fighters;
-
-        foreach ($fighters as $fighter) {
-            echo $fighter->getName();
-        }
-
-        echo "\n";
     }
 
     private function getAvailableFightActions()
@@ -148,25 +163,25 @@ class FightMode extends Game
         $damages = $this->currentSpell->getSpellStats();
         $statToMinus = $this::$settings['statForHealth'];
 
-        foreach($this->currentTarget->getStats() as $stat) {
-            if ($stat->getStat()->getName() === $statToMinus) {
-                echo $this->currentTarget->getName() . " is going to be hurt on " . $statToMinus . "\n";
-                echo "Current Value: " . $stat->getStat()->getValue() . "\n";
+        echo $this->currentTarget->getName() . " is going to be hurt on " . $statToMinus . "\n";
+        echo "Current Value: " . $this->currentTarget->getTemporaryStats()[$statToMinus] . "\n";
 
-                foreach($damages as $damage) {
-                    $damage = $damage->getStat();
+        foreach($damages as $damage) {
+            $damage = $damage->getStat();
 
-                    $stat->getStat()->setValue($stat->getStat()->getValue() - $damage->getValue());
-                    echo $this->currentTarget->getName() . " took " . $damage->getValue() . " " . $damage->getName() . "\n";
-                }
+            $stats = $this->currentTarget->getTemporaryStats();
 
-                echo "Remaining Value Value: " . $stat->getStat()->getValue() . "\n";
+            $stats[$statToMinus] = $stats[$statToMinus] - $damage->getValue();
+            echo $this->currentTarget->getName() . " took " . $damage->getValue() . " " . $damage->getName() . "\n";
+        }
 
-                if ($stat->getStat()->getValue() <= 0) {
-                        unset($this->fighters[array_search($this->currentTarget, $this->fighters)]);
-                        unset($this->foes[array_search($this->currentTarget, $this->foes)]);
-                }
-            }
+        $this->currentTarget->setTemporaryStats($stats);
+        echo "Remaining Value Value: " .$stats[$statToMinus] . "\n";
+
+        if ($this->currentTarget->getTemporaryStats()[$statToMinus] <= 0) {
+                echo "unset";
+                unset($this->fighters[array_search($this->currentTarget, $this->fighters)]);
+                unset($this->foes[array_search($this->currentTarget, $this->foes)]);
         }
     }
 
@@ -264,9 +279,8 @@ class FightMode extends Game
         $foes = $this->foes;
         foreach ($foes as $foe) {
             echo "\n- " . $foe->getName();
-            $foeStats = $foe->getStats();
-            foreach ($foeStats as $foeStat) {
-                echo " | " . $foeStat->getStat()->getName() . " " . $foeStat->getStat()->getValue();
+            foreach ($foe->getTemporaryStats() as $key => $foeStat) {
+                echo " | " . $key . " " . $foeStat;
             }
         }
         echo "\n";

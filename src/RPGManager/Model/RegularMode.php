@@ -412,7 +412,13 @@ class RegularMode extends Game
         $c = 0;
         foreach ($monsters as $monster){
             for ($i = 0; $i < $numberOfMonsters[$c]; $i++){
-                array_push($foes, $monster);
+                if($numberOfMonsters[$c] > 1) {
+                    $foe = clone $monster;
+                    $foe->setName($monster->getName() . $i);
+                } else {
+                    $foe = clone $monster;
+                }
+                array_push($foes, $foe);
             }
             $c++;
         }
