@@ -40,13 +40,13 @@ class FightMode extends Game
     private function sortByCarac($a, $b)
     {
         foreach ($a->getStats() as $stat) {
-            if ($stat->getStat()->getName() === $this::$settings['initiativeCarac']) {
+            if ($stat->getStat()->getName() === $this::$settings['statForInititative']) {
                 $aValue = $stat->getStat()->getValue();
             }
         }
 
         foreach ($b->getStats() as $stat) {
-            if ($stat->getStat()->getName() === $this::$settings['initiativeCarac']) {
+            if ($stat->getStat()->getName() === $this::$settings['statForInititative']) {
                 $bValue = $stat->getStat()->getValue();
             }
         }
@@ -59,7 +59,7 @@ class FightMode extends Game
 
         $fighters = array_merge($this->players, $this->foes);
 
-        if ($this::$settings['initiativeCarac'] !== null) {
+        if ($this::$settings['statForInititative'] !== null) {
             usort($fighters, array($this, 'sortByCarac'));
         } else {
             shuffle($fighters);
@@ -146,7 +146,7 @@ class FightMode extends Game
     private function executeDamageSpell()
     {
         $damages = $this->currentSpell->getSpellStats();
-        $statToMinus = $this::$settings['StatForHealth'];
+        $statToMinus = $this::$settings['statForHealth'];
 
         foreach($this->currentTarget->getStats() as $stat) {
             if ($stat->getStat()->getName() === $statToMinus) {
@@ -159,7 +159,7 @@ class FightMode extends Game
                     $stat->getStat()->setValue($stat->getStat()->getValue() - $damage->getValue());
                     echo $this->currentTarget->getName() . " took " . $damage->getValue() . " " . $damage->getName() . "\n";
                 }
-s
+
                 echo "Remaining Value Value: " . $stat->getStat()->getValue() . "\n";
 
                 if ($stat->getStat()->getValue() <= 0) {
