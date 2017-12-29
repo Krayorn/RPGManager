@@ -83,7 +83,7 @@ class FightMode extends Game
 
     private function resolvePlayerTurn() {
 
-        echo "it's " . $this->currentFighter->getName() . " turn ! \n";
+        echo "\nIt's " . $this->currentFighter->getName() . " turn ! \n";
 
         $actions = $this->getAvailableFightActions();
         echo "\nAVAILABLE ACTIONS:\n";
@@ -106,6 +106,7 @@ class FightMode extends Game
         foreach ($availableActions as $value) {
             if ($this->isValidAction($value, $args)) {
                 $actionDone = true;
+	            $this->currentPlayer = $this->currentFighter->getName();
 
                 $this->writeActionLog($this->currentFighter->getName() . " " . trim($args[0]));
                 $this->writeAccessLog($value . "Action");

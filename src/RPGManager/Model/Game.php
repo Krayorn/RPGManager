@@ -65,7 +65,7 @@ abstract class Game extends Template
 
 	protected function inventoryAction()
 	{
-		$player = $this->em->find('RPGManager\Entity\Character', $this->currentPlayer->getId());
+		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
 		$playerInventory = $player->getCharacterInventories();
 
 		if (empty($playerInventory)) {
