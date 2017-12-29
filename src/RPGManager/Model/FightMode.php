@@ -42,10 +42,13 @@ class FightMode extends Game
 
     public function startFight()
     {
-        $initative = $this->setInitiative();
         $this->writeAccessLog("startFight()");
 
         while (true) {
+            $this->setInitiative();
+
+            echo "\n NEW TURN \n";
+
             foreach ($this->fighters as $fighter) {
                 $this->currentFighter = $fighter;
                 if (in_array($fighter, $this->foes)) {
@@ -60,17 +63,8 @@ class FightMode extends Game
 
     private function sortByCarac($a, $b)
     {
-        foreach ($a->getStats() as $stat) {
-            if ($stat->getStat()->getName() === $this::$settings['statForInititative']) {
-                $aValue = $stat->getStat()->getValue();
-            }
-        }
-
-        foreach ($b->getStats() as $stat) {
-            if ($stat->getStat()->getName() === $this::$settings['statForInititative']) {
-                $bValue = $stat->getStat()->getValue();
-            }
-        }
+        $aValue = $a->getTemporaryStats()[$this::$settings['statForInititative']];
+        $bValue = $b->getTemporaryStats()[$this::$settings['statForInititative']];
 
         return ($bValue < $aValue) ? -1 : 1;
     }
@@ -103,7 +97,7 @@ class FightMode extends Game
 
     private function resolvePlayerTurn()
     {
-        $this->displayFoesState();
+        $this->displayFightState();
         echo "\nIt's " . $this->currentFighter->getName() . " turn ! \n";
 
         $actions = $this->getAvailableFightActions();
@@ -182,17 +176,39 @@ class FightMode extends Game
 
     private function executeDebuffSpell()
     {
-        echo "in DebuffSpell \n";
+        $this->executeStatChangeSpell('debuff');
     }
 
     private function executeBuffSpell()
     {
-        echo "in BuffSpell \n";
+        $this->executeStatChangeSpell('buff');
     }
 
-    private function executeHealSpell()
+    private function executeStatChangeSpell($type)
     {
-        echo "in HealSpell \n";
+        $statsToUpdate = $this->currentSpell->getSpellStats();
+
+        $currentStats = $this->currentTarget->getTemporaryStats();
+
+        foreach($statsToUpdate as $stat) {
+            $stat = $stat->getStat();
+            if($type === 'buff' || $type === 'heal') {
+                $currentStats[$stat->getName()] = $currentStats[$stat->getName()] + $stat->getValue();
+
+                echo $this->currentTarget->getName() . " took a " . $type ." of " . $stat->getValue() . " points, to the stat: " . $stat->getName() . "\n";
+            } else {
+
+                $currentStats[$stat->getName()] = $currentStats[$stat->getName()] - $stat->getValue();
+                echo $this->currentTarget->getName() . " took a debuff of " . $stat->getValue() . " points, to the stat: " . $stat->getName() . "\n";
+
+                if ($currentStats[$stat->getName()] <= 0) {
+                    $currentStats[$stat->getName()] = 1;
+                }
+
+            }
+        }
+
+        $this->currentTarget->setTemporaryStats($currentStats);
     }
 
     private function isValidAction($actionName, $args)
@@ -269,13 +285,13 @@ class FightMode extends Game
         }
     }
 
-    private function displayFoesState()
+    private function displayFightState()
     {
-        $foes = $this->foes;
-        foreach ($foes as $foe) {
-            echo "\n- " . $foe->getName();
-            foreach ($foe->getTemporaryStats() as $key => $foeStat) {
-                echo " | " . $key . " " . $foeStat;
+        $fighters = $this->fighters;
+        foreach ($fighters as $fighter) {
+            echo "\n- " . $fighter->getName();
+            foreach ($fighter->getTemporaryStats() as $key => $fighterStat) {
+                echo " | " . $key . " " . $fighterStat;
             }
         }
         echo "\n";
