@@ -199,9 +199,11 @@ class RegularMode extends Game
 
     protected function attackActionCheck($args)
     {
-        if (!isset($args[2]) || trim($args[2]) == '') {
-            echo "ARGS MISSING \n";
+        if (empty($this->getFoes())){
+            echo "Lol, there's no one to attack here \n";
+            return false;
         }
+
         return true;
     }
 
