@@ -268,15 +268,17 @@ class RegularMode extends Game
             foreach ($item->getItem()->getItemStats() as $stat){
                 if(!isset($statList[$stat->getStat()->getName()])){
                     $statList[$stat->getStat()->getName()] = $stat->getStat()->getValue();
+                }else{
+                    $statList[$stat->getStat()->getName()] += $stat->getStat()->getValue();
                 }
-                $statList[$stat->getStat()->getName()] += $stat->getStat()->getValue();
             }
         }
         foreach ($playerStats as $stat){
             if(!isset($statList[$stat->getStat()->getName()])){
                 $statList[$stat->getStat()->getName()] = $stat->getStat()->getValue();
+            }else{
+                $statList[$stat->getStat()->getName()] += $stat->getStat()->getValue();
             }
-            $statList[$stat->getStat()->getName()] += $stat->getStat()->getValue();
         }
         foreach ($statList as $name => $value){
             echo $name." ".$value."\n";
