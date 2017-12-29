@@ -25,7 +25,7 @@ class FightMode extends Game
         $this->writeAccessLog("startFight()");
 
         while (true) {
-            foreach($this->fighters as $fighter) {
+            foreach ($this->fighters as $fighter) {
                 $this->currentFighter = $fighter;
                 if (in_array($fighter, $this->foes)) {
                     $this->resolveMonsterTurn();
@@ -37,14 +37,15 @@ class FightMode extends Game
         }
     }
 
-    private function sortByCarac($a, $b) {
-        foreach($a->getStats() as $stat) {
+    private function sortByCarac($a, $b)
+    {
+        foreach ($a->getStats() as $stat) {
             if ($stat->getStat()->getName() === $this::$settings['initiativeCarac']) {
                 $aValue = $stat->getStat()->getValue();
             }
         }
 
-        foreach($b->getStats() as $stat) {
+        foreach ($b->getStats() as $stat) {
             if ($stat->getStat()->getName() === $this::$settings['initiativeCarac']) {
                 $bValue = $stat->getStat()->getValue();
             }
@@ -58,14 +59,14 @@ class FightMode extends Game
 
         $fighters = array_merge($this->players, $this->foes);
 
-        if($this::$settings['initiativeCarac'] !== null) {
+        if ($this::$settings['initiativeCarac'] !== null) {
             usort($fighters, array($this, 'sortByCarac'));
         } else {
             shuffle($fighters);
         }
         $this->fighters = $fighters;
 
-        foreach($fighters as $fighter) {
+        foreach ($fighters as $fighter) {
             echo $fighter->getName();
         }
 
@@ -79,14 +80,16 @@ class FightMode extends Game
         return $this->basicActions;
     }
 
-    private function resolveMonsterTurn() {
+    private function resolveMonsterTurn()
+    {
         echo $this->currentFighter->getName() . " just made a move !\n";
         return true;
     }
 
-    private function resolvePlayerTurn() {
-
-        echo "it's " . $this->currentFighter->getName() . " turn ! \n";
+    private function resolvePlayerTurn()
+    {
+        $this->displayFoesState();
+        echo "\nIt's " . $this->currentFighter->getName() . " turn ! \n";
 
         $actions = $this->getAvailableFightActions();
         echo "\nAVAILABLE ACTIONS:\n";
@@ -95,7 +98,7 @@ class FightMode extends Game
         }
         echo "\n >> ";
 
-        $handle = fopen("php://stdin","r");
+        $handle = fopen("php://stdin", "r");
         $line = fgets($handle);
         $args = explode(" ", $line);
         $this->executePlayerAction($args, $actions);
@@ -109,20 +112,26 @@ class FightMode extends Game
         foreach ($availableActions as $value) {
             if ($this->isValidAction($value, $args)) {
                 $actionDone = true;
+                $this->currentPlayer = $this->currentFighter->getName();
 
                 $this->writeActionLog($this->currentFighter->getName() . " " . trim($args[0]));
                 $this->writeAccessLog($value . "Action");
 
                 call_user_func([$this, $value . "Action"]);
 
-                if(in_array($value, ['skills', 'inventory'])) {
+                if (in_array($value, ['skills', 'inventory'])) {
                     $this->resolvePlayerTurn();
                 }
             }
         }
 
+<<<<<<< HEAD
         if(!$actionDone) {
             if ($this->isASpell(trim($args[0])) && $this->isTargetValid(trim($args[1]))) {
+=======
+        if (!$actionDone) {
+            if ($this->isASpell($args)) {
+>>>>>>> 0d9ac04a150785c2235874d6d8ea1d34537d4876
                 $actionDone = true;
 
                 $this->writeActionLog($this->currentFighter->getName() . " use " . $this->currentSpell->getName() . " on " . $this->currentTarget->getName());
@@ -132,13 +141,14 @@ class FightMode extends Game
             }
         }
 
-        if(!$actionDone) {
+        if (!$actionDone) {
             echo "We don't know what you just did, plz use something that make sense you moron \n";
             $this->resolvePlayerTurn();
         }
 
     }
 
+<<<<<<< HEAD
     private function executeDamageSpell()
     {
         $damages = $this->currentSpell->getSpellStats();
@@ -155,6 +165,10 @@ class FightMode extends Game
                     $stat->getStat()->setValue($stat->getStat()->getValue() - $damage->getValue());
                     echo $this->currentTarget->getName() . " took " . $damage->getValue() . " " . $damage->getName() . "\n";
                 }
+=======
+    private function execureFighterSpell($spellName, $targetName)
+    {
+>>>>>>> 0d9ac04a150785c2235874d6d8ea1d34537d4876
 
                 echo "Remaining Value Value: " . $stat->getStat()->getValue() . "\n";
 
@@ -192,14 +206,18 @@ class FightMode extends Game
         return false;
     }
 
+<<<<<<< HEAD
     protected function isASpell($spellName)
+=======
+    protected function isASpell($args)
+>>>>>>> 0d9ac04a150785c2235874d6d8ea1d34537d4876
     {
 
         $spellName = str_replace('_', ' ', $spellName);
 
         $spells = $this->currentFighter->getCharacterSpells();
 
-        foreach($spells as $spell) {
+        foreach ($spells as $spell) {
             if ($spellName == $spell->getSpell()->getName()) {
                 $this->currentSpell = $spell->getSpell();
                 return true;
@@ -250,8 +268,21 @@ class FightMode extends Game
     private function skillsAction()
     {
         $spells = $this->currentFighter->getCharacterSpells();
-        foreach($spells as $spell) {
+        foreach ($spells as $spell) {
             echo $spell->getSpell()->getName() . ": " . $spell->getSpell()->getDescription() . "\n";
         }
+    }
+
+    private function displayFoesState()
+    {
+        $foes = $this->foes;
+        foreach ($foes as $foe) {
+            echo "\n- " . $foe->getName();
+            $foeStats = $foe->getStats();
+            foreach ($foeStats as $foeStat) {
+                echo " | " . $foeStat->getStat()->getName() . " " . $foeStat->getStat()->getValue();
+            }
+        }
+        echo "\n";
     }
 }

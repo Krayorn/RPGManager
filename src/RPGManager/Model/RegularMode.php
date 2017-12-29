@@ -8,7 +8,7 @@ class RegularMode extends Game
 {
 
     private static $instance = null;
-    protected $basicActions = ["move", "take", "inventory", "location", "attack", "speak"];
+    protected $basicActions = ["move", "take", "inventory", "location", "attack", "speak", "stat"];
 
     private static function getInstance()
     {
@@ -199,9 +199,11 @@ class RegularMode extends Game
 
     protected function attackActionCheck($args)
     {
-        if (!isset($args[2]) || trim($args[2]) == '') {
-            echo "ARGS MISSING \n";
+        if (empty($this->getFoes())){
+            echo "Lol, there's no one to attack here \n";
+            return false;
         }
+
         return true;
     }
 
@@ -252,6 +254,38 @@ class RegularMode extends Game
 		$npc = $this->em->find('RPGManager\Entity\Npc', $this->getNpcId());
 		echo $npc->getDialog() . "\n";
 	}
+
+    private function statActionCheck($args)
+    {
+        return true;
+    }
+
+    private function statAction()
+    {
+        $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+        $playerStats = $player->getStats();
+        $playerInventory= $player->getCharacterInventories();
+        $statList = [];
+        foreach ($playerInventory as $item){
+            foreach ($item->getItem()->getItemStats() as $stat){
+                if(!isset($statList[$stat->getStat()->getName()])){
+                    $statList[$stat->getStat()->getName()] = $stat->getStat()->getValue();
+                }else{
+                    $statList[$stat->getStat()->getName()] += $stat->getStat()->getValue();
+                }
+            }
+        }
+        foreach ($playerStats as $stat){
+            if(!isset($statList[$stat->getStat()->getName()])){
+                $statList[$stat->getStat()->getName()] = $stat->getStat()->getValue();
+            }else{
+                $statList[$stat->getStat()->getName()] += $stat->getStat()->getValue();
+            }
+        }
+        foreach ($statList as $name => $value){
+            echo $name." ".$value."\n";
+        }
+    }
 
 	private function getNpcId()
 	{

@@ -29,6 +29,28 @@ class CharacterInventory
     private $item;
 
     /**
+     * @var int
+     * @Column(name="number", type="integer", nullable=true)
+     */
+    private $number;
+
+    /**
+     * @return int
+     */
+    public function getNumber()
+    {
+        return $this->number;
+    }
+
+    /**
+     * @param int $number
+     */
+    public function setNumber($number)
+    {
+        $this->number = $number;
+    }
+
+    /**
      * @return int
      */
     public function getId()

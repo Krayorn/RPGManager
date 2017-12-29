@@ -131,6 +131,7 @@ class Parser extends Template {
                     $monstersInventoryTable[$monster['name'] . '_' . $item['name']] = new MonsterInventory();
                     $monstersInventoryTable[$monster['name'] . '_' . $item['name']]->setMonster($monstersEntities[$monster['name']]);
                     $monstersInventoryTable[$monster['name'] . '_' . $item['name']]->setItem($itemsEntities[$item['name']]);
+                    $monstersInventoryTable[$monster['name'] . '_' . $item['name']]->setNumber($item['number']);
 
                     $entityManager->persist($monstersInventoryTable[$monster['name'] . '_' . $item['name']]);
                 }
@@ -247,6 +248,7 @@ class Parser extends Template {
                     $charactersInventoryTable[$character['name'] . '_' . $item['name']] = new CharacterInventory();
                     $charactersInventoryTable[$character['name'] . '_' . $item['name']]->setCharacter($charactersEntities[$character['name']]);
                     $charactersInventoryTable[$character['name'] . '_' . $item['name']]->setItem($itemsEntities[$item['name']]);
+                    $charactersInventoryTable[$character['name'] . '_' . $item['name']]->setNumber($item['number']);
 
                      $entityManager->persist($charactersInventoryTable[$character['name'] . '_' . $item['name']]);
                 }
