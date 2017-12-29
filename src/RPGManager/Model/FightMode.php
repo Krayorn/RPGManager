@@ -161,7 +161,10 @@ class FightMode extends Game
 
     private function fleeAction()
     {
-        echo "IN FLEE ACTION \n";
+        unset($this->fighters[array_search($this->currentFighter, $this->fighters)]);
+
+        //TODO: check if characters in fight
+        // if not end fight
     }
 
     private function skillsActionCheck()
@@ -176,17 +179,4 @@ class FightMode extends Game
 
         echo "IN SKILLS ACTION \n";
     }
-
-    private function inventoryActionCheck()
-    {
-        echo "IN inventoryAction CHECK \n";
-
-        return true;
-    }
-
-    private function inventoryAction()
-    {
-        echo "IN INVENTORY ACTION \n";
-    }
-
 }
