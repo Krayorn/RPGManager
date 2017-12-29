@@ -6,9 +6,11 @@ class FightMode extends Game
 {
     private $players;
     private $foes;
+    private $fighters;
     private $basicActions = ['flee', 'skills', 'inventory'];
     private $currentFighter;
-    private $fighters;
+    private $currentTarget;
+    private $currentSpell;
 
     public function __construct($players, $foes, $entityManager)
     {
@@ -27,7 +29,8 @@ class FightMode extends Game
                 $this->currentFighter = $fighter;
                 if (in_array($fighter, $this->foes)) {
                     $this->resolveMonsterTurn();
-                } else {
+                }
+                if (in_array($fighter, $this->players)) {
                     $this->resolvePlayerTurn();
                 }
             }
@@ -119,13 +122,13 @@ class FightMode extends Game
         }
 
         if(!$actionDone) {
-            if ($this->isASpell($args)) {
+            if ($this->isASpell(trim($args[0])) && $this->isTargetValid(trim($args[1]))) {
                 $actionDone = true;
 
-                $this->writeActionLog($this->currentFighter->getName() . " use " . trim($args[0]) . " on " . trim($args[1]));
+                $this->writeActionLog($this->currentFighter->getName() . " use " . $this->currentSpell->getName() . " on " . $this->currentTarget->getName());
                 $this->writeAccessLog($value . "Action");
 
-                $this->executeFighterSpell(trim($args[0]), trim($args[1]));
+                call_user_func([$this, "execute" . $this->currentSpell->getType() . "Spell"]);
             }
         }
 
@@ -136,8 +139,46 @@ class FightMode extends Game
 
     }
 
-    private function execureFighterSpell($spellName, $targetName) {
+    private function executeDamageSpell()
+    {
+        $damages = $this->currentSpell->getSpellStats();
+        $statToMinus = $this::$settings['StatForHealth'];
 
+        foreach($this->currentTarget->getStats() as $stat) {
+            if ($stat->getStat()->getName() === $statToMinus) {
+                echo $this->currentTarget->getName() . " is going to be hurt on " . $statToMinus . "\n";
+                echo "Current Value: " . $stat->getStat()->getValue() . "\n";
+
+                foreach($damages as $damage) {
+                    $damage = $damage->getStat();
+
+                    $stat->getStat()->setValue($stat->getStat()->getValue() - $damage->getValue());
+                    echo $this->currentTarget->getName() . " took " . $damage->getValue() . " " . $damage->getName() . "\n";
+                }
+
+                echo "Remaining Value Value: " . $stat->getStat()->getValue() . "\n";
+
+                if ($stat->getStat()->getValue() <= 0) {
+                        unset($this->fighters[array_search($this->currentTarget, $this->fighters)]);
+                        unset($this->foes[array_search($this->currentTarget, $this->foes)]);
+                }
+            }
+        }
+    }
+
+    private function executeDebuffSpell()
+    {
+        echo "in DebuffSpell \n";
+    }
+
+    private function executeBuffSpell()
+    {
+        echo "in BuffSpell \n";
+    }
+
+    private function executeHealSpell()
+    {
+        echo "in HealSpell \n";
     }
 
     private function isValidAction($actionName, $args)
@@ -151,18 +192,37 @@ class FightMode extends Game
         return false;
     }
 
-    protected function isASpell($args) {
+    protected function isASpell($spellName)
+    {
 
-        $spellName = str_replace('_', ' ', trim($args[0]));
+        $spellName = str_replace('_', ' ', $spellName);
 
         $spells = $this->currentFighter->getCharacterSpells();
 
         foreach($spells as $spell) {
             if ($spellName == $spell->getSpell()->getName()) {
+                $this->currentSpell = $spell->getSpell();
                 return true;
             }
         }
 
+        return false;
+    }
+
+    private function isTargetValid($targetName)
+    {
+        $targetName = str_replace('_', ' ', $targetName);
+
+        foreach($this->fighters as $fighter) {
+            if ($targetName === $fighter->getName()) {
+                $spellType = $this->currentSpell->getType();
+                if ((in_array($fighter, $this->foes) && ($spellType == 'debuff' || $spellType == 'damage'))
+                    ||(in_array($fighter, $this->players) && ($spellType == 'heal' || $spellType == 'buff'))) {
+                        $this->currentTarget = $fighter;
+                        return true;
+                }
+            }
+        }
         return false;
     }
 
