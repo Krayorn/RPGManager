@@ -168,7 +168,6 @@ class FightMode extends Game
         $this->currentTarget->setTemporaryStats($stats);
 
         if ($this->currentTarget->getTemporaryStats()[$statToMinus] <= 0) {
-                echo "unset";
                 unset($this->fighters[array_search($this->currentTarget, $this->fighters)]);
                 unset($this->foes[array_search($this->currentTarget, $this->foes)]);
         }
@@ -192,10 +191,10 @@ class FightMode extends Game
 
         foreach($statsToUpdate as $stat) {
             $stat = $stat->getStat();
-            if($type === 'buff' || $type === 'heal') {
+            if($type === 'buff') {
                 $currentStats[$stat->getName()] = $currentStats[$stat->getName()] + $stat->getValue();
 
-                echo $this->currentTarget->getName() . " took a " . $type ." of " . $stat->getValue() . " points, to the stat: " . $stat->getName() . "\n";
+                echo $this->currentTarget->getName() . " took a buff of " . $stat->getValue() . " points, to the stat: " . $stat->getName() . "\n";
             } else {
 
                 $currentStats[$stat->getName()] = $currentStats[$stat->getName()] - $stat->getValue();
@@ -258,16 +257,17 @@ class FightMode extends Game
 
     private function fleeActionCheck($args)
     {
-        echo "IN fleeAction CHECK \n";
         return true;
     }
 
     private function fleeAction()
     {
         unset($this->fighters[array_search($this->currentFighter, $this->fighters)]);
+        unset($this->players[array_search($this->currentFighter, $this->players)]);
 
-        //TODO: check if characters in fight
-        // if not end fight
+        if(count($this->players) === 0) {
+            RegularMode::startGame($this->em, $this::$settings);
+        }
     }
 
     private function skillsActionCheck()
