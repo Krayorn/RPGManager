@@ -73,7 +73,8 @@ abstract class Game extends Template
 		} else {
 			echo "\n";
 			foreach ($playerInventory as $playerItem) {
-				echo "• " . $playerItem->getItem()->getName() . ': ' . $playerItem->getItem()->getDescription() . "\n";
+				echo "• " . $playerItem->getItem()->getName() . ': '
+					. $playerItem->getItem()->getDescription() . " (" . $playerItem->getNumber() . ")\n";
 			}
 		}
 	}

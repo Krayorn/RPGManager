@@ -374,8 +374,8 @@ class RegularMode extends Game
         } else {
             echo "• Monster(s) in this place :";
             $c = 0;
-            foreach ($monsters as $monster){
-                echo "\n - " . $monster->getName() . "(" . $numberOfMonsters[$c] . ")";
+            foreach ($monsters as $monster) {
+                echo "\n - " . $monster->getName() . " (" . $numberOfMonsters[$c] . ")";
                 $c++;
             }
         }
@@ -402,9 +402,14 @@ class RegularMode extends Game
         if (empty($items)) {
             echo "• Item(s) in this place : There's no item(s) here.";
         } else {
+	        $numberOfItems = $this->getNumbersOfItemsInArea();
+	        
             echo "• Item(s) in this place :";
+	        $c = 0;
             foreach ($items as $item) {
-                echo "\n - " . $item->getName() . " : " . $item->getDescription();
+                echo "\n - " . $item->getName() . " : "
+	                . $item->getDescription() . " (" . $numberOfItems[$c] . ")";
+	            $c ++;
             }
         }
         echo "\n";
@@ -434,6 +439,18 @@ class RegularMode extends Game
         }
         return $numberOfMonsters;
     }
+	
+	private function getNumbersOfItemsInArea()
+	{
+		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+		$itemLocations = $player->getLocation()->getitemLocations();
+		$numberOfItems = [];
+		
+		foreach ($itemLocations as $location) {
+			array_push($numberOfItems, $location->getNumber());
+		}
+		return $numberOfItems;
+	}
 
     private function getFoes()
     {
