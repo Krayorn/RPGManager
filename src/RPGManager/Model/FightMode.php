@@ -125,13 +125,8 @@ class FightMode extends Game
             }
         }
 
-<<<<<<< HEAD
         if(!$actionDone) {
             if ($this->isASpell(trim($args[0])) && $this->isTargetValid(trim($args[1]))) {
-=======
-        if (!$actionDone) {
-            if ($this->isASpell($args)) {
->>>>>>> 0d9ac04a150785c2235874d6d8ea1d34537d4876
                 $actionDone = true;
 
                 $this->writeActionLog($this->currentFighter->getName() . " use " . $this->currentSpell->getName() . " on " . $this->currentTarget->getName());
@@ -148,7 +143,6 @@ class FightMode extends Game
 
     }
 
-<<<<<<< HEAD
     private function executeDamageSpell()
     {
         $damages = $this->currentSpell->getSpellStats();
@@ -165,11 +159,7 @@ class FightMode extends Game
                     $stat->getStat()->setValue($stat->getStat()->getValue() - $damage->getValue());
                     echo $this->currentTarget->getName() . " took " . $damage->getValue() . " " . $damage->getName() . "\n";
                 }
-=======
-    private function execureFighterSpell($spellName, $targetName)
-    {
->>>>>>> 0d9ac04a150785c2235874d6d8ea1d34537d4876
-
+s
                 echo "Remaining Value Value: " . $stat->getStat()->getValue() . "\n";
 
                 if ($stat->getStat()->getValue() <= 0) {
@@ -206,11 +196,7 @@ class FightMode extends Game
         return false;
     }
 
-<<<<<<< HEAD
     protected function isASpell($spellName)
-=======
-    protected function isASpell($args)
->>>>>>> 0d9ac04a150785c2235874d6d8ea1d34537d4876
     {
 
         $spellName = str_replace('_', ' ', $spellName);

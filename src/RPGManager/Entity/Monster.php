@@ -8,6 +8,9 @@ namespace RPGManager\Entity;
  **/
 class Monster
 {
+
+    private $temporaryStats;
+
     /**
      * @var int
      * @Column(name="id", type="integer")
