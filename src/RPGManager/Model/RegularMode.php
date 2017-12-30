@@ -119,8 +119,8 @@ class RegularMode extends Game
 		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
 		$item = $this->em->find('RPGManager\Entity\Item', $this->getItemId());
 		
+		// add item in player inventory
 		if ($this->isItemInInventory($item->getId())) {
-			echo "edit number of item";
 			$inventories = $player->getCharacterInventories();
 			foreach ($inventories as $inventory) {
 				if ($inventory->getItem()->getId() == $item->getId()) {
@@ -137,13 +137,19 @@ class RegularMode extends Game
 			
 			$this->em->persist($characterInventory[$this->currentPlayer . '_' . $itemName]);
 			$this->em->flush();
-			echo "Item " . $itemName . " added to your inventory! \n";
 		}
+		echo "Item " . $itemName . " added to your inventory! \n";
 		
+		// remove item from place
 		$itemLocations = $player->getLocation()->getItemLocations();
 		foreach ($itemLocations as $location) {
 			if ($location->getItem()->getId() == $this->getItemId()) {
-				$this->em->remove($location);
+				if ($location->getNumber() > 1) {
+					$location->setNumber($location->getNumber() - 1);
+					$this->em->persist($location);
+				} else {
+					$this->em->remove($location);
+				}
 				$this->em->flush();
 			}
 		}
@@ -298,24 +304,28 @@ class RegularMode extends Game
         $playerStats = $player->getStats();
         $playerInventory= $player->getCharacterInventories();
         $statList = [];
-        foreach ($playerInventory as $item){
-            foreach ($item->getItem()->getItemStats() as $stat){
-                if(!isset($statList[$stat->getStat()->getName()])){
+        
+        foreach ($playerInventory as $item) {
+            foreach ($item->getItem()->getItemStats() as $stat) {
+                if (!isset($statList[$stat->getStat()->getName()])) {
                     $statList[$stat->getStat()->getName()] = $stat->getStat()->getValue();
-                }else{
+                } else {
                     $statList[$stat->getStat()->getName()] += $stat->getStat()->getValue();
                 }
             }
         }
-        foreach ($playerStats as $stat){
-            if(!isset($statList[$stat->getStat()->getName()])){
+        
+        foreach ($playerStats as $stat) {
+            if (!isset($statList[$stat->getStat()->getName()])) {
                 $statList[$stat->getStat()->getName()] = $stat->getStat()->getValue();
-            }else{
+            } else {
                 $statList[$stat->getStat()->getName()] += $stat->getStat()->getValue();
             }
         }
-        foreach ($statList as $name => $value){
-            echo $name." ".$value."\n";
+        
+        echo "\n";
+        foreach ($statList as $name => $value) {
+            echo "• " . $name . " " . $value . "\n";
         }
     }
 
