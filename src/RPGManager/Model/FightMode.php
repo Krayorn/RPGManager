@@ -91,8 +91,16 @@ class FightMode extends Game
 
     private function resolveMonsterTurn()
     {
-        echo $this->currentFighter->getName() . " just made a move !\n";
-        return true;
+        $spells = $this->currentFighter->getSpells();
+
+        $this->currentSpell = $spells[rand(0, count($spells) - 1)]->getSpell();
+        $this->currentTarget = $this->currentSpell->getType() === 'damage'
+        ? $this->players[rand(0, count($this->players) - 1)]
+        : $this->foes[rand(0, count($this->foes) - 1)];
+
+        echo $this->currentFighter->getName() . " just used " . $this->currentSpell->getName() . " on " . $this->currentTarget->getName() . "\n";
+
+        call_user_func([$this, "execute" . $this->currentSpell->getType() . "Spell"]);
     }
 
     private function resolvePlayerTurn()
@@ -170,6 +178,11 @@ class FightMode extends Game
         if ($this->currentTarget->getTemporaryStats()[$statToMinus] <= 0) {
                 unset($this->fighters[array_search($this->currentTarget, $this->fighters)]);
                 unset($this->foes[array_search($this->currentTarget, $this->foes)]);
+
+                if(count($this->foes) === 0) {
+                    echo "All foes have been defeated";
+                    RegularMode::startGame($this->em, $this::$settings);
+                }
         }
     }
 
@@ -226,7 +239,7 @@ class FightMode extends Game
 
         $spellName = str_replace('_', ' ', $spellName);
 
-        $spells = $this->currentFighter->getCharacterSpells();
+        $spells = $this->currentFighter->getSpells();
 
         foreach ($spells as $spell) {
             if ( strtolower($spellName) == strtolower($spell->getSpell()->getName())) {
@@ -279,7 +292,7 @@ class FightMode extends Game
 
     private function skillsAction()
     {
-        $spells = $this->currentFighter->getCharacterSpells();
+        $spells = $this->currentFighter->getSpells();
         foreach ($spells as $spell) {
             echo $spell->getSpell()->getName() . ": " . $spell->getSpell()->getDescription() . "\n";
         }

@@ -134,7 +134,7 @@ class Character
 	/**
 	 * @return mixed
 	 */
-	public function getCharacterSpells()
+	public function getSpells()
 	{
 		return $this->characterSpells;
 	}
@@ -142,7 +142,7 @@ class Character
 	/**
 	 * @param mixed $characterSpells
 	 */
-	public function setCharacterSpells($characterSpells)
+	public function setSpells($characterSpells)
 	{
 		$this->characterSpells = $characterSpells;
 	}

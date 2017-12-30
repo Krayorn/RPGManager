@@ -134,7 +134,7 @@ class Monster
 	/**
 	 * @return mixed
 	 */
-	public function getMonsterSpells()
+	public function getSpells()
 	{
 		return $this->monsterSpells;
 	}
@@ -142,7 +142,7 @@ class Monster
 	/**
 	 * @param mixed $monsterSpells
 	 */
-	public function setMonsterSpells($monsterSpells)
+	public function setSpells($monsterSpells)
 	{
 		$this->monsterSpells = $monsterSpells;
 	}

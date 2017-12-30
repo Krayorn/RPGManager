@@ -112,13 +112,13 @@ class RegularMode extends Game
 
         return true;
     }
-    
+
 	protected function takeAction()
 	{
 		$itemName = str_replace('_', ' ', trim($this->args[2]));
 		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
 		$item = $this->em->find('RPGManager\Entity\Item', $this->getItemId());
-		
+
 		if ($this->isItemInInventory($item->getId())) {
 			echo "edit number of item";
 			$inventories = $player->getCharacterInventories();
@@ -134,12 +134,12 @@ class RegularMode extends Game
 			$characterInventory[$this->currentPlayer . '_' . $itemName]->setCharacter($player);
 			$characterInventory[$this->currentPlayer . '_' . $itemName]->setItem($item);
 			$characterInventory[$this->currentPlayer . '_' . $itemName]->setNumber(1);
-			
+
 			$this->em->persist($characterInventory[$this->currentPlayer . '_' . $itemName]);
 			$this->em->flush();
 			echo "Item " . $itemName . " added to your inventory! \n";
 		}
-		
+
 		$itemLocations = $player->getLocation()->getItemLocations();
 		foreach ($itemLocations as $location) {
 			if ($location->getItem()->getId() == $this->getItemId()) {
@@ -148,7 +148,7 @@ class RegularMode extends Game
 			}
 		}
 	}
-	
+
 	private function isItemInInventory($itemId)
 	{
 		$result = $this->em->createQueryBuilder()
@@ -160,12 +160,12 @@ class RegularMode extends Game
 			->getQuery()
 			->getResult()
 		;
-		
+
 		if (empty($result) || null == $result) {
 			echo "THIS ITEM IS NOT IN INVENTORY. \n";
 			return false;
 		}
-		
+
 		return true;
 	}
 
@@ -195,7 +195,7 @@ class RegularMode extends Game
 
         $playerDestination = null;
         foreach ($player->getLocation()->getDirections() as $direction) {
-            if ($direction->getName() == trim($this->args[2])) {
+            if (strtolower($direction->getName()) == strtolower(trim($this->args[2]))) {
                 $playerDestination = $direction;
                 break;
             }
@@ -215,7 +215,7 @@ class RegularMode extends Game
 
         $playerDestination = null;
         foreach ($player->getLocation()->getDirections() as $direction) {
-            if ($direction->getName() == trim($this->args[2])) {
+            if (strtolower($direction->getName()) == strtolower(trim($this->args[2]))) {
                 $playerDestination = $direction;
                 break;
             }
@@ -403,7 +403,7 @@ class RegularMode extends Game
             echo "• Item(s) in this place : There's no item(s) here.";
         } else {
 	        $numberOfItems = $this->getNumbersOfItemsInArea();
-	        
+
             echo "• Item(s) in this place :";
 	        $c = 0;
             foreach ($items as $item) {
@@ -439,13 +439,13 @@ class RegularMode extends Game
         }
         return $numberOfMonsters;
     }
-	
+
 	private function getNumbersOfItemsInArea()
 	{
 		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
 		$itemLocations = $player->getLocation()->getitemLocations();
 		$numberOfItems = [];
-		
+
 		foreach ($itemLocations as $location) {
 			array_push($numberOfItems, $location->getNumber());
 		}
