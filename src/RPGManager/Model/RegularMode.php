@@ -3,6 +3,7 @@
 namespace RPGManager\Model;
 
 use RPGManager\Entity\CharacterInventory;
+use RPGManager\Entity\ItemLocation;
 use RPGManager\Utils\CharacterUtils;
 use RPGManager\Utils\ItemUtils;
 use RPGManager\Utils\MonsterUtils;
@@ -149,6 +150,69 @@ class RegularMode extends Game
 			}
 		}
 	}
+
+    protected function dropActionCheck($args)
+    {
+        if (!isset($args[2]) || trim($args[2]) == '') {
+            echo "ARGS MISSING";
+            return false;
+        }
+
+        $itemUtils = new ItemUtils();
+        $itemName = str_replace('_', ' ', trim($this->args[2]));
+        $item = $this->em->find('RPGManager\Entity\Item', $itemUtils->getItemId($itemName, $this->em));
+        if (!$itemUtils->isItemInInventory($item, $this->em)) {
+            echo "not in inventory";
+            return false;
+        }
+        return true;
+    }
+
+    protected function dropAction()
+    {
+        $characterUtils = new CharacterUtils();
+        $player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
+
+        $itemUtils = new ItemUtils();
+        $itemName = str_replace('_', ' ', trim($this->args[2]));
+        $locationName = $player->getLocation()->getName();
+        $item = $this->em->find('RPGManager\Entity\Item', $itemUtils->getItemId($itemName, $this->em));
+
+        // remove item from inventory
+        $inventories = $player->getCharacterInventories();
+        foreach ($inventories as $inventory) {
+            if ($inventory->getItem()->getId() == $itemUtils->getItemId($itemName, $this->em)) {
+                if ($inventory->getNumber() > 1) {
+                    $inventory->setNumber($inventory->getNumber() - 1);
+                    $this->em->persist($inventory);
+                } else {
+                    $this->em->remove($inventory);
+                }
+                $this->em->flush();
+            }
+        }
+        echo "Item " . $itemName . " has been droped from your inventory! \n";
+
+        // add item in location
+        if (in_array($item, $itemUtils->getItemsInArea($player->getLocation()))) {
+            $itemLocations = $player->getLocation()->getItemLocations();
+            foreach ($itemLocations as $location) {
+                if ($location->getItem()->getId() == $item->getId()) {
+                    $location->setNumber($location->getNumber() + 1);
+                    $this->em->persist($location);
+                    $this->em->flush();
+                }
+            }
+        } else {
+            $ItemLocation[$locationName . '_' . $itemName] = new ItemLocation();
+            $ItemLocation[$locationName . '_' . $itemName]->setPlace($player->getLocation());
+            $ItemLocation[$locationName . '_' . $itemName]->setItem($item);
+            $ItemLocation[$locationName . '_' . $itemName]->setNumber(1);
+
+            $this->em->persist($ItemLocation[$locationName . '_' . $itemName]);
+            $this->em->flush();
+        }
+    }
 
     protected function moveActionCheck($args)
     {
