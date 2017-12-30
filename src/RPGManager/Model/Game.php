@@ -3,6 +3,7 @@
 namespace RPGManager\Model;
 
 use RPGManager\Template;
+use RPGManager\Utils\CharacterUtils;
 
 abstract class Game extends Template
 {
@@ -21,37 +22,8 @@ abstract class Game extends Template
         $this->em = $entityManager;
     }
 
-    protected function isPlayerExist()
+    protected function getPlayerLocationId()
     {
-        $result = $this->em->createQueryBuilder()
-            ->select('player.name')
-            ->from('RPGManager\Entity\Character', 'player')
-            ->where('player.name = :name')
-            ->setParameter('name', $this->currentPlayer)
-            ->getQuery()
-            ->getResult();
-
-        if (empty($result) || null == $result) {
-            echo "THIS PLAYER DOES NOT EXIST. \n";
-            return false;
-        }
-        return true;
-    }
-
-    protected function getPlayerId()
-    {
-        $playerId = $this->em->createQueryBuilder()
-            ->select('player.id')
-            ->from('RPGManager\Entity\Character', 'player')
-            ->where('player.name = :name')
-            ->setParameter('name', $this->currentPlayer)
-            ->getQuery()
-            ->getResult();
-
-        return $playerId[0]['id'];
-    }
-
-    protected function getPlayerLocationId(){
         $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
         $playerLocationId = $player->getLocation()->getId();
 
@@ -65,7 +37,8 @@ abstract class Game extends Template
 
 	protected function inventoryAction()
 	{
-		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+		$characterUtils = new CharacterUtils();
+		$player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
 		$playerInventory = $player->getCharacterInventories();
 
 		if (empty($playerInventory)) {

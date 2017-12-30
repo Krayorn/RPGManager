@@ -3,6 +3,7 @@
 namespace RPGManager\Model;
 
 use RPGManager\Entity\CharacterInventory;
+use RPGManager\Utils\CharacterUtils;
 use RPGManager\Utils\ItemUtils;
 use RPGManager\Utils\MonsterUtils;
 use RPGManager\Utils\NpcUtils;
@@ -48,8 +49,9 @@ class RegularMode extends Game
     {
         $this->writeAccessLog("executePlayerAction()");
         $this->currentPlayer = trim($args[0]);
+        $characterUtils = new CharacterUtils();
 
-        if ($this->isPlayerExist()) {
+        if ($characterUtils->isPlayerExist($this->currentPlayer, $this->em)) {
             foreach ($availableActions as $value) {
                 if ($this->isValidAction($value, $args)) {
                     if (isset($args[2])) {
@@ -90,7 +92,9 @@ class RegularMode extends Game
 
 	    $itemName = str_replace('_', ' ', trim($this->args[2]));
 	    $item = $this->em->find('RPGManager\Entity\Item', $itemUtils->getItemId($itemName, $this->em));
-	    $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+	    
+	    $characterUtils = new CharacterUtils();
+	    $player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
 
 	    if (!in_array($item, $itemUtils->getItemsInArea($player->getLocation()))) {
             echo "This item is not accessible.\n";
@@ -102,7 +106,8 @@ class RegularMode extends Game
 
 	protected function takeAction()
 	{
-		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+		$characterUtils = new CharacterUtils();
+		$player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
 
 		$itemUtils = new ItemUtils();
 		$itemName = str_replace('_', ' ', trim($this->args[2]));
@@ -152,7 +157,8 @@ class RegularMode extends Game
             return false;
         }
 
-        $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+        $characterUtils = new CharacterUtils();
+        $player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
 
         $playerDestination = null;
         foreach ($player->getLocation()->getDirections() as $direction) {
@@ -172,7 +178,8 @@ class RegularMode extends Game
 
     protected function moveAction()
     {
-        $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+	    $characterUtils = new CharacterUtils();
+	    $player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
 
         $playerDestination = null;
         foreach ($player->getLocation()->getDirections() as $direction) {
@@ -192,8 +199,9 @@ class RegularMode extends Game
 
     protected function attackActionCheck($args)
     {
-	    $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
 	    $monsterUtils = new MonsterUtils();
+	    $characterUtils = new CharacterUtils();
+	    $player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
 	    
         if (empty($monsterUtils->getFoes($player->getLocation()))) {
             echo "Lol, there's no one to attack here \n";
@@ -205,10 +213,12 @@ class RegularMode extends Game
 
     protected function attackAction()
     {
-	    $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
 	    $monsterUtils = new MonsterUtils();
-	    
-        $fight = new FightMode($this->getCharactersInArea(), $monsterUtils->getFoes($player->getLocation()), $this->em);
+	    $characterUtils = new CharacterUtils();
+	    $player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
+	    $location = $player->getLocation();
+	
+	    $fight = new FightMode($characterUtils->getCharactersInArea($location), $monsterUtils->getFoes($location), $this->em);
         $fight->startFight();
     }
 
@@ -219,9 +229,9 @@ class RegularMode extends Game
 
     protected function locationAction()
     {
-        $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
-        echo "\n";
-        echo $player->getLocation()->getName() . ': ' . $player->getLocation()->getDescription() . "\n\n";
+	    $characterUtils = new CharacterUtils();
+	    $player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
+        echo "\n" . $player->getLocation()->getName() . ': ' . $player->getLocation()->getDescription() . "\n\n";
         
         $location = $player->getLocation();
         $this->displayDirections();
@@ -249,7 +259,9 @@ class RegularMode extends Game
 		}
 
 		$npc = $this->em->find('RPGManager\Entity\Npc', $npcUtils->getNpcId($npcName, $this->em));
-		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+		$characterUtils = new CharacterUtils();
+		$player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
+		
 		if (!in_array($npc, $npcUtils->getNpcsInArea($player->getLocation()))) {
 			echo "There is no npc with this name. \n";
 			return false;
@@ -273,7 +285,9 @@ class RegularMode extends Game
 
     private function caracAction()
     {
-        $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+	    $characterUtils = new CharacterUtils();
+	    $player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
+	    
         $playerStats = $player->getStats();
         $playerInventory= $player->getCharacterInventories();
         $statList = [];
@@ -304,26 +318,15 @@ class RegularMode extends Game
 
     private function displayDirections()
     {
-        $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+	    $characterUtils = new CharacterUtils();
+	    $player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
         $directions = $player->getLocation()->getDirections();
+        
         echo "• Available direction(s) :";
         foreach ($directions as $direction) {
             echo "\n - " . $direction->getName();
         }
         echo "\n";
     }
-
-	private function getCharactersInArea()
-	{
-		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
-		$playerLocations = $player->getLocation()->getCharacters();
-		$players = [];
-
-		foreach ($playerLocations as $character) {
-			array_push($players, $character);
-		}
-
-		return $players;
-	}
 
 }
