@@ -5,6 +5,7 @@ namespace RPGManager\Model;
 use RPGManager\Entity\CharacterInventory;
 use RPGManager\Utils\ItemUtils;
 use RPGManager\Utils\MonsterUtils;
+use RPGManager\Utils\NpcUtils;
 
 class RegularMode extends Game
 {
@@ -221,16 +222,18 @@ class RegularMode extends Game
         $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
         echo "\n";
         echo $player->getLocation()->getName() . ': ' . $player->getLocation()->getDescription() . "\n\n";
-
+        
+        $location = $player->getLocation();
         $this->displayDirections();
         
         $monsterUtils = new MonsterUtils();
-	    $monsterUtils->displayMonsters($player->getLocation());
-        
-        $this->displayNpcs();
+	    $monsterUtils->displayMonsters($location);
+     
+	    $npcUtils = new NpcUtils();
+	    $npcUtils->displayNpcs($location);
 
 	    $itemUtils = new ItemUtils();
-	    $itemUtils->displayItems($player->getLocation());
+	    $itemUtils->displayItems($location);
     }
 
 	private function speakActionCheck($args) {
@@ -239,13 +242,16 @@ class RegularMode extends Game
 			return false;
 		}
 
-		if (!$this->isNpcExist()) {
+		$npcUtils = new NpcUtils();
+		$npcName = str_replace('_', ' ', trim($this->args[2]));
+		if (!$npcUtils->isNpcExist($npcName, $this->em)) {
 			return false;
 		}
 
-		$npc = $this->em->find('RPGManager\Entity\Npc', $this->getNpcId());
-		if (!in_array($npc, $this->getNpcsInArea())) {
-			echo "THIS NPC IS NOT IN THIS AREA. \n";
+		$npc = $this->em->find('RPGManager\Entity\Npc', $npcUtils->getNpcId($npcName, $this->em));
+		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+		if (!in_array($npc, $npcUtils->getNpcsInArea($player->getLocation()))) {
+			echo "There is no npc with this name. \n";
 			return false;
 		}
 
@@ -253,7 +259,10 @@ class RegularMode extends Game
 	}
 
 	private function speakAction() {
-		$npc = $this->em->find('RPGManager\Entity\Npc', $this->getNpcId());
+		$npcUtils = new NpcUtils();
+		$npcName = str_replace('_', ' ', trim($this->args[2]));
+		
+		$npc = $this->em->find('RPGManager\Entity\Npc', $npcUtils->getNpcId($npcName, $this->em));
 		echo $npc->getDialog() . "\n";
 	}
 
@@ -293,41 +302,6 @@ class RegularMode extends Game
         }
     }
 
-	private function getNpcId()
-	{
-		$npcName = str_replace('_', ' ', trim($this->args[2]));
-
-		$npcId = $this->em->createQueryBuilder()
-			->select('npc.id')
-			->from('RPGManager\Entity\Npc', 'npc')
-			->where('npc.name = :name')
-			->setParameter('name', $npcName)
-			->getQuery()
-			->getResult();
-
-		return $npcId[0]['id'];
-	}
-
-	private function isNpcExist()
-	{
-		$npcName = str_replace('_', ' ', trim($this->args[2]));
-
-		$result = $this->em->createQueryBuilder()
-			->select('npc.name')
-			->from('RPGManager\Entity\Npc', 'npc')
-			->where('npc.name = :name')
-			->setParameter('name', $npcName)
-			->getQuery()
-			->getResult();
-
-		if (empty($result) || null == $result) {
-			echo "THIS NPC DOES NOT EXIST. \n";
-			return false;
-		}
-
-		return true;
-	}
-
     private function displayDirections()
     {
         $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
@@ -338,33 +312,6 @@ class RegularMode extends Game
         }
         echo "\n";
     }
-
-    private function displayNpcs()
-    {
-        $npcs = $this->getNpcsInArea();
-        if (empty($npcs)) {
-            echo "• Npc(s) in this place : There's no one here.";
-        } else {
-            echo "• Npc(s) in this place :";
-            foreach ($npcs as $npc) {
-                echo "\n - " . $npc->getName() . " : " . $npc->getDescription();
-            }
-        }
-        echo "\n";
-    }
-
-	private function getNpcsInArea()
-	{
-		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
-		$npcLocations = $player->getLocation()->getNpcLocations();
-		$npcs = [];
-
-		foreach ($npcLocations as $location) {
-			array_push($npcs, $location->getNpc());
-		}
-
-		return $npcs;
-	}
 
 	private function getCharactersInArea()
 	{
