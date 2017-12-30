@@ -4,6 +4,7 @@ namespace RPGManager\Model;
 
 use RPGManager\Entity\CharacterInventory;
 use RPGManager\Utils\ItemUtils;
+use RPGManager\Utils\MonsterUtils;
 
 class RegularMode extends Game
 {
@@ -190,7 +191,10 @@ class RegularMode extends Game
 
     protected function attackActionCheck($args)
     {
-        if (empty($this->getFoes())){
+	    $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+	    $monsterUtils = new MonsterUtils();
+	    
+        if (empty($monsterUtils->getFoes($player->getLocation()))) {
             echo "Lol, there's no one to attack here \n";
             return false;
         }
@@ -200,8 +204,10 @@ class RegularMode extends Game
 
     protected function attackAction()
     {
-        echo "IN ATTACK ACTION \n";
-        $fight = new FightMode($this->getCharactersInArea(), $this->getFoes(), $this->em);
+	    $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+	    $monsterUtils = new MonsterUtils();
+	    
+        $fight = new FightMode($this->getCharactersInArea(), $monsterUtils->getFoes($player->getLocation()), $this->em);
         $fight->startFight();
     }
 
@@ -217,7 +223,10 @@ class RegularMode extends Game
         echo $player->getLocation()->getName() . ': ' . $player->getLocation()->getDescription() . "\n\n";
 
         $this->displayDirections();
-        $this->displayMonsters();
+        
+        $monsterUtils = new MonsterUtils();
+	    $monsterUtils->displayMonsters($player->getLocation());
+        
         $this->displayNpcs();
 
 	    $itemUtils = new ItemUtils();
@@ -330,23 +339,6 @@ class RegularMode extends Game
         echo "\n";
     }
 
-    private function displayMonsters()
-    {
-        $monsters = $this->getMonstersInArea();
-        $numberOfMonsters = $this->getNumbersOfMonstersInArea();
-        if (empty($monsters)) {
-            echo "• Ennemy in this place : There's no threat here.";
-        } else {
-            echo "• Monster(s) in this place :";
-            $c = 0;
-            foreach ($monsters as $monster) {
-                echo "\n - " . $monster->getName() . " (" . $numberOfMonsters[$c] . ")";
-                $c++;
-            }
-        }
-        echo "\n";
-    }
-
     private function displayNpcs()
     {
         $npcs = $this->getNpcsInArea();
@@ -359,54 +351,6 @@ class RegularMode extends Game
             }
         }
         echo "\n";
-    }
-
-	private function getMonstersInArea()
-	{
-		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
-		$monsterLocations = $player->getLocation()->getMonsterLocations();
-		$monsters = [];
-
-		foreach ($monsterLocations as $location) {
-			array_push($monsters, $location->getMonster());
-		}
-
-		return $monsters;
-	}
-
-    private function getNumbersOfMonstersInArea()
-    {
-        $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
-        $monsterLocations = $player->getLocation()->getMonsterLocations();
-        $numberOfMonsters = [];
-
-        foreach ($monsterLocations as $location) {
-            array_push($numberOfMonsters, $location->getNumber());
-        }
-        return $numberOfMonsters;
-    }
-
-    private function getFoes()
-    {
-        $monsters = $this->getMonstersInArea();
-        $numberOfMonsters = $this->getNumbersOfMonstersInArea();
-        $foes = [];
-
-        $c = 0;
-        foreach ($monsters as $monster){
-            for ($i = 0; $i < $numberOfMonsters[$c]; $i++){
-                if($numberOfMonsters[$c] > 1) {
-                    $foe = clone $monster;
-                    $foe->setName($monster->getName() . $i);
-                } else {
-                    $foe = clone $monster;
-                }
-                array_push($foes, $foe);
-            }
-            $c++;
-        }
-
-        return $foes;
     }
 
 	private function getNpcsInArea()
