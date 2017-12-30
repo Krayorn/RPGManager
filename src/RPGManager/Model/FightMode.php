@@ -176,11 +176,25 @@ class FightMode extends Game
         $this->currentTarget->setTemporaryStats($stats);
 
         if ($this->currentTarget->getTemporaryStats()[$statToMinus] <= 0) {
-                unset($this->fighters[array_search($this->currentTarget, $this->fighters)]);
+
+            if(in_array($this->currentTarget, $this->players)) {
+                unset($this->players[array_search($this->currentTarget, $this->players)]);
+                $this->players = array_values($this->players);
+
+            } else {
                 unset($this->foes[array_search($this->currentTarget, $this->foes)]);
+                $this->foes = array_values($this->foes);
+            }
+
+            echo $this->currentTarget->getName()  . " died from his wound \n";
+            unset($this->fighters[array_search($this->currentTarget, $this->fighters)]);
 
                 if(count($this->foes) === 0) {
-                    echo "All foes have been defeated";
+                    echo "\nAll foes have been defeated\n";
+                    RegularMode::startGame($this->em, $this::$settings);
+                }
+                if(count($this->players) === 0) {
+                    echo "\nAll players have been defeated\n";
                     RegularMode::startGame($this->em, $this::$settings);
                 }
         }
@@ -277,6 +291,8 @@ class FightMode extends Game
     {
         unset($this->fighters[array_search($this->currentFighter, $this->fighters)]);
         unset($this->players[array_search($this->currentFighter, $this->players)]);
+
+        $this->players = array_values($this->players);
 
         if(count($this->players) === 0) {
             RegularMode::startGame($this->em, $this::$settings);
