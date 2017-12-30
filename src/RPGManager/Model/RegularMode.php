@@ -3,12 +3,12 @@
 namespace RPGManager\Model;
 
 use RPGManager\Entity\CharacterInventory;
+use RPGManager\Utils\ItemUtils;
 
 class RegularMode extends Game
 {
-
     private static $instance = null;
-    protected $basicActions = ["move", "take", "inventory", "location", "attack", "speak", "stat"];
+    protected $basicActions = ['location', 'inventory', 'carac', 'speak', 'move', 'take', 'drop', 'attack'];
 
     private static function getInstance()
     {
@@ -80,47 +80,34 @@ class RegularMode extends Game
             return false;
         }
 
-        if (!$this->isItemExist()) {
+	    $itemUtils = new ItemUtils();
+	    $itemName = str_replace('_', ' ', trim($this->args[2]));
+	    if (!$itemUtils->isItemExist($itemName, $this->em)) {
             return false;
         }
 
-	    $item = $this->em->find('RPGManager\Entity\Item', $this->getItemId());
-	    if (!in_array($item, $this->getItemsInArea())) {
-            echo "THIS ITEM IS NOT ACCESSIBLE FROM THIS AREA. \n";
+	    $itemName = str_replace('_', ' ', trim($this->args[2]));
+	    $item = $this->em->find('RPGManager\Entity\Item', $itemUtils->getItemId($itemName, $this->em));
+	    $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
+
+	    if (!in_array($item, $itemUtils->getItemsInArea($player->getLocation()))) {
+            echo "This item is not accessible.\n";
             return false;
 	    }
 
         return true;
     }
 
-    private function isItemExist()
-    {
-        $itemName = str_replace('_', ' ', trim($this->args[2]));
-
-        $result = $this->em->createQueryBuilder()
-            ->select('item.name')
-            ->from('RPGManager\Entity\Item', 'item')
-            ->where('item.name = :name')
-            ->setParameter('name', $itemName)
-            ->getQuery()
-            ->getResult();
-
-        if (empty($result) || null == $result) {
-            echo "THIS ITEM DOES NOT EXIST. \n";
-            return false;
-        }
-
-        return true;
-    }
-
 	protected function takeAction()
 	{
-		$itemName = str_replace('_', ' ', trim($this->args[2]));
 		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
-		$item = $this->em->find('RPGManager\Entity\Item', $this->getItemId());
 
-		if ($this->isItemInInventory($item->getId())) {
-			echo "edit number of item";
+		$itemUtils = new ItemUtils();
+		$itemName = str_replace('_', ' ', trim($this->args[2]));
+		$item = $this->em->find('RPGManager\Entity\Item', $itemUtils->getItemId($itemName, $this->em));
+
+		// add item in player inventory
+		if ($itemUtils->isItemInInventory($item->getId(), $this->em)) {
 			$inventories = $player->getCharacterInventories();
 			foreach ($inventories as $inventory) {
 				if ($inventory->getItem()->getId() == $item->getId()) {
@@ -137,52 +124,24 @@ class RegularMode extends Game
 
 			$this->em->persist($characterInventory[$this->currentPlayer . '_' . $itemName]);
 			$this->em->flush();
-			echo "Item " . $itemName . " added to your inventory! \n";
 		}
 
+		echo "Item " . $itemName . " added to your inventory! \n";
+
+		// remove item from place
 		$itemLocations = $player->getLocation()->getItemLocations();
 		foreach ($itemLocations as $location) {
-			if ($location->getItem()->getId() == $this->getItemId()) {
-				$this->em->remove($location);
+			if ($location->getItem()->getId() == $itemUtils->getItemId($itemName, $this->em)) {
+				if ($location->getNumber() > 1) {
+					$location->setNumber($location->getNumber() - 1);
+					$this->em->persist($location);
+				} else {
+					$this->em->remove($location);
+				}
 				$this->em->flush();
 			}
 		}
 	}
-
-	private function isItemInInventory($itemId)
-	{
-		$result = $this->em->createQueryBuilder()
-			->select('item')
-			->from('RPGManager\Entity\Item', 'item')
-			->innerJoin('RPGManager\Entity\CharacterInventory', 'inventory', 'WITH', 'item.id = inventory.item')
-			->where('item.id = :item')
-			->setParameter('item', $itemId)
-			->getQuery()
-			->getResult()
-		;
-
-		if (empty($result) || null == $result) {
-			echo "THIS ITEM IS NOT IN INVENTORY. \n";
-			return false;
-		}
-
-		return true;
-	}
-
-    private function getItemId()
-    {
-        $itemName = str_replace('_', ' ', trim($this->args[2]));
-
-        $itemId = $this->em->createQueryBuilder()
-            ->select('item.id')
-            ->from('RPGManager\Entity\Item', 'item')
-            ->where('item.name = :name')
-            ->setParameter('name', $itemName)
-            ->getQuery()
-            ->getResult();
-
-        return $itemId[0]['id'];
-    }
 
     protected function moveActionCheck($args)
     {
@@ -260,7 +219,9 @@ class RegularMode extends Game
         $this->displayDirections();
         $this->displayMonsters();
         $this->displayNpcs();
-        $this->displayItems();
+
+	    $itemUtils = new ItemUtils();
+	    $itemUtils->displayItems($player->getLocation());
     }
 
 	private function speakActionCheck($args) {
@@ -287,35 +248,39 @@ class RegularMode extends Game
 		echo $npc->getDialog() . "\n";
 	}
 
-    private function statActionCheck($args)
+    private function caracActionCheck($args)
     {
         return true;
     }
 
-    private function statAction()
+    private function caracAction()
     {
         $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
         $playerStats = $player->getStats();
         $playerInventory= $player->getCharacterInventories();
         $statList = [];
-        foreach ($playerInventory as $item){
-            foreach ($item->getItem()->getItemStats() as $stat){
-                if(!isset($statList[$stat->getStat()->getName()])){
+
+        foreach ($playerInventory as $item) {
+            foreach ($item->getItem()->getItemStats() as $stat) {
+                if (!isset($statList[$stat->getStat()->getName()])) {
                     $statList[$stat->getStat()->getName()] = $stat->getStat()->getValue();
-                }else{
+                } else {
                     $statList[$stat->getStat()->getName()] += $stat->getStat()->getValue();
                 }
             }
         }
-        foreach ($playerStats as $stat){
-            if(!isset($statList[$stat->getStat()->getName()])){
+
+        foreach ($playerStats as $stat) {
+            if (!isset($statList[$stat->getStat()->getName()])) {
                 $statList[$stat->getStat()->getName()] = $stat->getStat()->getValue();
-            }else{
+            } else {
                 $statList[$stat->getStat()->getName()] += $stat->getStat()->getValue();
             }
         }
-        foreach ($statList as $name => $value){
-            echo $name." ".$value."\n";
+
+        echo "\n";
+        foreach ($statList as $name => $value) {
+            echo "• " . $name . " " . $value . "\n";
         }
     }
 
@@ -396,25 +361,6 @@ class RegularMode extends Game
         echo "\n";
     }
 
-    private function displayItems()
-    {
-        $items = $this->getItemsInArea();
-        if (empty($items)) {
-            echo "• Item(s) in this place : There's no item(s) here.";
-        } else {
-	        $numberOfItems = $this->getNumbersOfItemsInArea();
-
-            echo "• Item(s) in this place :";
-	        $c = 0;
-            foreach ($items as $item) {
-                echo "\n - " . $item->getName() . " : "
-	                . $item->getDescription() . " (" . $numberOfItems[$c] . ")";
-	            $c ++;
-            }
-        }
-        echo "\n";
-    }
-
 	private function getMonstersInArea()
 	{
 		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
@@ -439,18 +385,6 @@ class RegularMode extends Game
         }
         return $numberOfMonsters;
     }
-
-	private function getNumbersOfItemsInArea()
-	{
-		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
-		$itemLocations = $player->getLocation()->getitemLocations();
-		$numberOfItems = [];
-
-		foreach ($itemLocations as $location) {
-			array_push($numberOfItems, $location->getNumber());
-		}
-		return $numberOfItems;
-	}
 
     private function getFoes()
     {
@@ -486,19 +420,6 @@ class RegularMode extends Game
 		}
 
 		return $npcs;
-	}
-
-	private function getItemsInArea()
-	{
-		$player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
-		$itemLocations = $player->getLocation()->getItemLocations();
-		$items = [];
-
-		foreach ($itemLocations as $location) {
-			array_push($items, $location->getItem());
-		}
-
-		return $items;
 	}
 
 	private function getCharactersInArea()

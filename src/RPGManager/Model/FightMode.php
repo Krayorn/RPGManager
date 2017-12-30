@@ -94,9 +94,9 @@ class FightMode extends Game
         $spells = $this->currentFighter->getSpells();
 
         $this->currentSpell = $spells[rand(0, count($spells) - 1)]->getSpell();
-        $this->currentTarget = $this->currentSpell->getType() === 'damage'
-        ? $this->players[rand(0, count($this->players) - 1)]
-        : $this->foes[rand(0, count($this->foes) - 1)];
+        $this->currentTarget = $this->currentSpell->getType() === 'buff'
+        ? $this->foes[rand(0, count($this->foes) - 1)]
+        : $this->players[rand(0, count($this->players) - 1)];
 
         echo $this->currentFighter->getName() . " just used " . $this->currentSpell->getName() . " on " . $this->currentTarget->getName() . "\n";
 
