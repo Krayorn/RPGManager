@@ -6,9 +6,8 @@ use RPGManager\Entity\CharacterInventory;
 
 class RegularMode extends Game
 {
-
     private static $instance = null;
-    protected $basicActions = ["move", "take", "inventory", "location", "attack", "speak", "stat"];
+    protected $basicActions = ['location', 'inventory', 'carac', 'speak', 'move', 'take', 'drop', 'attack'];
 
     private static function getInstance()
     {
@@ -293,12 +292,12 @@ class RegularMode extends Game
 		echo $npc->getDialog() . "\n";
 	}
 
-    private function statActionCheck($args)
+    private function caracActionCheck($args)
     {
         return true;
     }
 
-    private function statAction()
+    private function caracAction()
     {
         $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
         $playerStats = $player->getStats();
