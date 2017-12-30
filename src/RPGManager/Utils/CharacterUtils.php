@@ -14,15 +14,15 @@ class CharacterUtils
 			->getQuery()
 			->getResult()
 		;
-		
+
 		if (empty($result) || null == $result) {
 			echo "This player does not exist.\n";
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	public function getPlayerId($currentPlayer, $em)
 	{
 		$playerId = $em->createQueryBuilder()
@@ -33,17 +33,17 @@ class CharacterUtils
 			->getQuery()
 			->getResult()
 		;
-		
+
 		return $playerId[0]['id'];
 	}
-	
+
 	public function getCharactersInArea($location)
 	{
 		$players = [];
 		foreach ($location->getCharacters() as $character) {
 			array_push($players, $character);
 		}
-		
+
 		return $players;
 	}
 }

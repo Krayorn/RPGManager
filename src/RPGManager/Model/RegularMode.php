@@ -93,7 +93,7 @@ class RegularMode extends Game
 
 	    $itemName = str_replace('_', ' ', trim($this->args[2]));
 	    $item = $this->em->find('RPGManager\Entity\Item', $itemUtils->getItemId($itemName, $this->em));
-	    
+
 	    $characterUtils = new CharacterUtils();
 	    $player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
 
@@ -266,7 +266,7 @@ class RegularMode extends Game
 	    $monsterUtils = new MonsterUtils();
 	    $characterUtils = new CharacterUtils();
 	    $player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
-	    
+
         if (empty($monsterUtils->getFoes($player->getLocation()))) {
             echo "Lol, there's no one to attack here \n";
             return false;
@@ -280,8 +280,9 @@ class RegularMode extends Game
 	    $monsterUtils = new MonsterUtils();
 	    $characterUtils = new CharacterUtils();
 	    $player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
-	    $location = $player->getLocation();
-	
+        $location = $player->getLocation();
+        $this->em->refresh($location);
+
 	    $fight = new FightMode($characterUtils->getCharactersInArea($location), $monsterUtils->getFoes($location), $this->em);
         $fight->startFight();
     }
@@ -296,13 +297,13 @@ class RegularMode extends Game
 	    $characterUtils = new CharacterUtils();
 	    $player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
         echo "\n" . $player->getLocation()->getName() . ': ' . $player->getLocation()->getDescription() . "\n\n";
-        
+
         $location = $player->getLocation();
         $this->displayDirections();
-        
+
         $monsterUtils = new MonsterUtils();
 	    $monsterUtils->displayMonsters($location);
-     
+
 	    $npcUtils = new NpcUtils();
 	    $npcUtils->displayNpcs($location);
 
@@ -325,7 +326,7 @@ class RegularMode extends Game
 		$npc = $this->em->find('RPGManager\Entity\Npc', $npcUtils->getNpcId($npcName, $this->em));
 		$characterUtils = new CharacterUtils();
 		$player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
-		
+
 		if (!in_array($npc, $npcUtils->getNpcsInArea($player->getLocation()))) {
 			echo "There is no npc with this name. \n";
 			return false;
@@ -337,7 +338,7 @@ class RegularMode extends Game
 	private function speakAction() {
 		$npcUtils = new NpcUtils();
 		$npcName = str_replace('_', ' ', trim($this->args[2]));
-		
+
 		$npc = $this->em->find('RPGManager\Entity\Npc', $npcUtils->getNpcId($npcName, $this->em));
 		echo $npc->getDialog() . "\n";
 	}
@@ -351,7 +352,7 @@ class RegularMode extends Game
     {
 	    $characterUtils = new CharacterUtils();
 	    $player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
-	    
+
         $playerStats = $player->getStats();
         $playerInventory= $player->getCharacterInventories();
         $statList = [];
@@ -385,7 +386,7 @@ class RegularMode extends Game
 	    $characterUtils = new CharacterUtils();
 	    $player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
         $directions = $player->getLocation()->getDirections();
-        
+
         echo "• Available direction(s) :";
         foreach ($directions as $direction) {
             echo "\n - " . $direction->getName();
