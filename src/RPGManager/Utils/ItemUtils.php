@@ -11,6 +11,8 @@ class ItemUtils
 		$template = new Template();
 		$template->writeAccessLog(__METHOD__);
 		
+		$msc = microtime(true);
+		
 		$result = $em->createQueryBuilder()
 			->select('item.name')
 			->from('RPGManager\Entity\Item', 'item')
@@ -19,6 +21,8 @@ class ItemUtils
 			->getQuery()
 			->getResult()
 		;
+		
+		$template->writeRequestLog(__METHOD__, microtime(true ) - $msc);
 		
 		if (empty($result) || null == $result) {
 			echo "This item does not exist. \n";
@@ -33,6 +37,8 @@ class ItemUtils
 		$template = new Template();
 		$template->writeAccessLog(__METHOD__);
 		
+		$msc = microtime(true);
+		
 		$result = $em->createQueryBuilder()
 			->select('item')
 			->from('RPGManager\Entity\Item', 'item')
@@ -42,6 +48,8 @@ class ItemUtils
 			->getQuery()
 			->getResult()
 		;
+		
+		$template->writeRequestLog(__METHOD__, microtime(true ) - $msc);
 		
 		if (empty($result) || null == $result) {
 			return false;
@@ -55,6 +63,8 @@ class ItemUtils
 		$template = new Template();
 		$template->writeAccessLog(__METHOD__);
 		
+		$msc = microtime(true);
+		
 		$itemId = $em->createQueryBuilder()
 			->select('item.id')
 			->from('RPGManager\Entity\Item', 'item')
@@ -63,6 +73,8 @@ class ItemUtils
 			->getQuery()
 			->getResult()
 		;
+		
+		$template->writeRequestLog(__METHOD__, microtime(true ) - $msc);
 		
 		return $itemId[0]['id'];
 	}

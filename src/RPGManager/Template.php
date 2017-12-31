@@ -43,7 +43,7 @@ class Template
 
     public function writeRequestLog($log, $time = 0)
     {
-        $log .= " || => " . number_format($time * 1000, 2) . " ms";
+        $log .= " || " . number_format($time * 1000, 2) . " ms";
         $this->writeActionLogs('request.log', $log);
     }
 }

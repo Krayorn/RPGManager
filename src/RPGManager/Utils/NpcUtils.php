@@ -11,6 +11,8 @@ class NpcUtils
 		$template = new Template();
 		$template->writeAccessLog(__METHOD__);
 		
+		$msc = microtime(true);
+		
 		$npcId = $em->createQueryBuilder()
 			->select('npc.id')
 			->from('RPGManager\Entity\Npc', 'npc')
@@ -20,6 +22,8 @@ class NpcUtils
 			->getResult()
 		;
 		
+		$template->writeRequestLog(__METHOD__, microtime(true ) - $msc);
+		
 		return $npcId[0]['id'];
 	}
 	
@@ -27,6 +31,8 @@ class NpcUtils
 	{
 		$template = new Template();
 		$template->writeAccessLog(__METHOD__);
+		
+		$msc = microtime(true);
 		
 		$result = $em->createQueryBuilder()
 			->select('npc.name')
@@ -36,6 +42,8 @@ class NpcUtils
 			->getQuery()
 			->getResult()
 		;
+		
+		$template->writeRequestLog(__METHOD__, microtime(true ) - $msc);
 		
 		if (empty($result) || null == $result) {
 			echo "This npc does not exist. \n";
