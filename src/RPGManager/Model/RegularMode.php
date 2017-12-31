@@ -85,13 +85,15 @@ class RegularMode extends Game
     protected function takeActionCheck($args)
     {
         if (!isset($args[2]) || trim($args[2]) == '') {
-            echo "ARGS MISSING";
+        	$this->writeErrorLog(__METHOD__ . '|| You haven\'t precised which item you wish to take!');
+            echo "You haven't precised which item you wish to take!\n";
             return false;
         }
 
 	    $itemUtils = new ItemUtils();
 	    $itemName = str_replace('_', ' ', trim($this->args[2]));
 	    if (!$itemUtils->isItemExist($itemName, $this->em)) {
+		    $this->writeErrorLog(__METHOD__ . '|| The item ' . $itemName . ' does not exist.');
             return false;
         }
 
@@ -102,6 +104,7 @@ class RegularMode extends Game
 	    $player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
 
 	    if (!in_array($item, $itemUtils->getItemsInArea($player->getLocation()))) {
+		    $this->writeErrorLog(__METHOD__ . '|| The item ' . $itemName . ' is not accessible.');
             echo "This item is not accessible.\n";
             return false;
 	    }
@@ -158,17 +161,21 @@ class RegularMode extends Game
     protected function dropActionCheck($args)
     {
         if (!isset($args[2]) || trim($args[2]) == '') {
-            echo "ARGS MISSING";
+	        $this->writeErrorLog(__METHOD__ . '|| You haven\'t precised which item you wish to drop!');
+            echo "You haven't precised which item you wish to drop!\n";
             return false;
         }
 
         $itemUtils = new ItemUtils();
         $itemName = str_replace('_', ' ', trim($this->args[2]));
         $item = $this->em->find('RPGManager\Entity\Item', $itemUtils->getItemId($itemName, $this->em));
+        
         if (!$itemUtils->isItemInInventory($item, $this->em)) {
-            echo "not in inventory";
+	        $this->writeErrorLog(__METHOD__ . '|| The item ' . $itemName . ' is not in your inventory.');
+            echo "This item is not in your inventory\n";
             return false;
         }
+        
         return true;
     }
 
@@ -195,6 +202,7 @@ class RegularMode extends Game
                 $this->em->flush();
             }
         }
+        
         echo "Item " . $itemName . " has been dropped from your inventory! \n";
 
         // add item in location
@@ -221,7 +229,8 @@ class RegularMode extends Game
     protected function moveActionCheck($args)
     {
         if (!isset($args[2]) || trim($args[2]) == '') {
-            echo "You haven't precised in which place you wish to go !\n";
+	        $this->writeErrorLog(__METHOD__ . '|| You haven\'t precised in which place you wish to go!');
+            echo "You haven't precised in which place you wish to go!\n";
             return false;
         }
 
@@ -237,7 +246,8 @@ class RegularMode extends Game
         }
 
         if ($playerDestination === null) {
-            echo "This place hasn't any direction named: " . trim($this->args[2]) . ".\n";
+	        $this->writeErrorLog(__METHOD__ . '|| This place hasn\'t any direction named ' . trim($this->args[2]));
+            echo "This place hasn't any direction named " . trim($this->args[2]) . ".\n";
             return false;
         }
 
@@ -272,7 +282,8 @@ class RegularMode extends Game
 	    $player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
 
         if (empty($monsterUtils->getFoes($player->getLocation()))) {
-            echo "Lol, there's no one to attack here \n";
+	        $this->writeErrorLog(__METHOD__ . '|| Lol, there\'s no one to attack here.');
+            echo "Lol, there's no one to attack here.\n";
             return false;
         }
 
@@ -319,7 +330,8 @@ class RegularMode extends Game
 
 	private function speakActionCheck($args) {
 		if (!isset($args[2]) || trim($args[2]) == '') {
-			echo "ARGS MISSING \n";
+			$this->writeErrorLog(__METHOD__ . '|| You haven\'t precised with who you wish to speak!');
+			echo "You haven't precised with who you wish to speak!\n";
 			return false;
 		}
 
@@ -334,6 +346,7 @@ class RegularMode extends Game
 		$player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
 
 		if (!in_array($npc, $npcUtils->getNpcsInArea($player->getLocation()))) {
+			$this->writeErrorLog(__METHOD__ . '|| There is no npc with the name ' . $npcName);
 			echo "There is no npc with this name. \n";
 			return false;
 		}
