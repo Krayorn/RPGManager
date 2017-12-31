@@ -2,10 +2,15 @@
 
 namespace RPGManager\Utils;
 
+use RPGManager\Template;
+
 class NpcUtils
 {
 	public function getNpcId($npcName, $em)
 	{
+		$template = new Template();
+		$template->writeAccessLog(__METHOD__);
+		
 		$npcId = $em->createQueryBuilder()
 			->select('npc.id')
 			->from('RPGManager\Entity\Npc', 'npc')
@@ -20,6 +25,9 @@ class NpcUtils
 	
 	public function isNpcExist($npcName, $em)
 	{
+		$template = new Template();
+		$template->writeAccessLog(__METHOD__);
+		
 		$result = $em->createQueryBuilder()
 			->select('npc.name')
 			->from('RPGManager\Entity\Npc', 'npc')
@@ -30,7 +38,7 @@ class NpcUtils
 		;
 		
 		if (empty($result) || null == $result) {
-			echo "THIS NPC DOES NOT EXIST. \n";
+			echo "This npc does not exist. \n";
 			return false;
 		}
 		
@@ -39,6 +47,9 @@ class NpcUtils
 	
 	public function displayNpcs($location)
 	{
+		$template = new Template();
+		$template->writeAccessLog(__METHOD__);
+		
 		$npcs = $this->getNpcsInArea($location);
 		
 		if (empty($npcs)) {
@@ -54,6 +65,9 @@ class NpcUtils
 	
 	public function getNpcsInArea($location)
 	{
+		$template = new Template();
+		$template->writeAccessLog(__METHOD__);
+		
 		$npcs = [];
 		foreach ($location->getNpcLocations() as $npcLocation) {
 			array_push($npcs, $npcLocation->getNpc());

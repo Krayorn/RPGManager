@@ -38,15 +38,15 @@ class Parser extends Template {
     public static function generateModelsDb($gameConfig, $settings, $entityManager) {
         $parser = Parser::getInstance();
 
-        $parser->writeAccessLog("generateModelsDb()");
+        $parser->writeAccessLog('generateModelsDb()');
 
-        $items = $gameConfig["items"];
-        $monsters = $gameConfig["monsters"];
-        $npcs = $gameConfig["npcs"];
-        $characters = $gameConfig["characters"];
-        $places = $gameConfig["places"];
-        $stats = $gameConfig["stats"];
-        $spells = $gameConfig["spells"];
+        $items = $gameConfig['items'];
+        $monsters = $gameConfig['monsters'];
+        $npcs = $gameConfig['npcs'];
+        $characters = $gameConfig['characters'];
+        $places = $gameConfig['places'];
+        $stats = $gameConfig['stats'];
+        $spells = $gameConfig['spells'];
 
         $statsEntities = [];
 

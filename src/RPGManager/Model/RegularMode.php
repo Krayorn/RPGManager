@@ -25,10 +25,10 @@ class RegularMode extends Game
     public static function startGame($entityManager, $settings)
     {
         $game = RegularMode::getInstance();
-
-        $game->writeAccessLog("startGame()");
+	    $game::$settings = $settings;
+	
+	    $game->writeAccessLog(__METHOD__);
         $game->setEntityManager($entityManager);
-        $game::$settings = $settings;
 
         while (true) {
             echo "\nAVAILABLE ACTIONS:\n";
@@ -48,7 +48,8 @@ class RegularMode extends Game
 
     private function executePlayerAction($args, $availableActions)
     {
-        $this->writeAccessLog("executePlayerAction()");
+        $this->writeAccessLog(__METHOD__);
+        
         $this->currentPlayer = trim($args[0]);
         $characterUtils = new CharacterUtils();
 
@@ -60,8 +61,9 @@ class RegularMode extends Game
                     } else {
                         $this->writeActionLog($this->currentPlayer . " " . trim($args[1]));
                     }
-                    $this->writeAccessLog($value . "Action");
-                    call_user_func([$this, $value . "Action"]);
+                    
+                    $this->writeAccessLog(__CLASS__ . '::' . $value . 'Action');
+                    call_user_func([$this, $value . 'Action']);
                 }
             }
         }
@@ -69,9 +71,11 @@ class RegularMode extends Game
 
 	protected function isValidAction($actionName, $args)
 	{
+		$this->writeAccessLog(__METHOD__);
+		
 		if (strtolower(trim($args[1])) === strtolower($actionName) || trim($args[1]) === substr($actionName, 0, 1)) {
-			if (call_user_func([$this, $actionName . "ActionCheck"], $args)) {
-				$this->writeAccessLog($actionName . "ActionCheck");
+			if (call_user_func([$this, $actionName . 'ActionCheck'], $args)) {
+				$this->writeAccessLog(__CLASS__ . '::' . $actionName . 'ActionCheck');
 				return true;
 			}
 		}
@@ -134,7 +138,7 @@ class RegularMode extends Game
 			$this->em->flush();
 		}
 
-		echo "Item " . $itemName . " added to your inventory! \n";
+		echo "Item " . $itemName . " has been added to your inventory! \n";
 
 		// remove item from place
 		$itemLocations = $player->getLocation()->getItemLocations();
@@ -191,7 +195,7 @@ class RegularMode extends Game
                 $this->em->flush();
             }
         }
-        echo "Item " . $itemName . " has been droped from your inventory! \n";
+        echo "Item " . $itemName . " has been dropped from your inventory! \n";
 
         // add item in location
         if (in_array($item, $itemUtils->getItemsInArea($player->getLocation()))) {
@@ -342,7 +346,7 @@ class RegularMode extends Game
 		$npcName = str_replace('_', ' ', trim($this->args[2]));
 
 		$npc = $this->em->find('RPGManager\Entity\Npc', $npcUtils->getNpcId($npcName, $this->em));
-		echo $npc->getDialog() . "\n";
+		echo "\n" . $npc->getName() . ": \"" .$npc->getDialog() . "\" \n";
 	}
 
     private function caracActionCheck($args)
