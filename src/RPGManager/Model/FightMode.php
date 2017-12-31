@@ -204,7 +204,7 @@ class FightMode extends Game
             if(in_array($this->currentTarget, $this->players)) {
 
                 $statToSave = $this->currentTarget->getTemporaryStats();
-                $statToSave['hpToSave'] = 0;
+                $statToSave['hpToSave'] = 1; // set temporary to one, need to set it back to 0 when the remove($player)'ll work
                 $this->currentTarget->setTemporaryStats($statToSave);
 
                 array_push($this->playersOut, $this->currentTarget);
@@ -336,7 +336,8 @@ class FightMode extends Game
 
         foreach($this->playersOut as $player) {
             if ($player->getTemporaryStats()['hpToSave'] === 0) {
-                $this->em->remove($player);
+                // remove player don't work foreignKey errors currentyl going to set to 1 instead of 0 the player hp
+                // $this->em->remove($player);
             } else {
                 $stats = $player->getStats();
                 foreach($stats as $stat) {
