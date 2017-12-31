@@ -71,7 +71,7 @@ class FightMode extends Game
         while (true) {
             $this->setInitiative();
 
-            echo "\n NEW TURN \n";
+            echo "\n--- NEW TURN ---\n";
 
             foreach ($this->fighters as $fighter) {
                 $this->currentFighter = $fighter;
@@ -122,7 +122,7 @@ class FightMode extends Game
         ? $this->foes[rand(0, count($this->foes) - 1)]
         : $this->players[rand(0, count($this->players) - 1)];
 
-        echo $this->currentFighter->getName() . " just used " . $this->currentSpell->getName() . " on " . $this->currentTarget->getName() . "\n";
+        echo "\n" . $this->currentFighter->getName() . " used " . $this->currentSpell->getName() . " on " . $this->currentTarget->getName() . "\n";
 
         call_user_func([$this, "execute" . $this->currentSpell->getType() . "Spell"]);
     }
@@ -170,7 +170,7 @@ class FightMode extends Game
             if ($this->isASpell(trim($args[0])) && $this->isTargetValid(trim($args[1]))) {
                 $actionDone = true;
 
-                $this->writeActionLog($this->currentFighter->getName() . " use " . $this->currentSpell->getName() . " on " . $this->currentTarget->getName());
+                $this->writeActionLog($this->currentFighter->getName() . " used " . $this->currentSpell->getName() . " on " . $this->currentTarget->getName());
                 $this->writeAccessLog($value . "Action");
 
                 call_user_func([$this, "execute" . $this->currentSpell->getType() . "Spell"]);
@@ -226,11 +226,11 @@ class FightMode extends Game
             unset($this->fighters[array_search($this->currentTarget, $this->fighters)]);
 
                 if(count($this->foes) === 0) {
-                    echo "\nAll foes have been defeated\n";
+                    echo "\nAll foes have been defeated !\n";
                     $this->leaveFight();
                 }
                 if(count($this->players) === 0) {
-                    echo "\nAll players have been defeated\n";
+                    echo "\nAll players have been defeated !\n";
                     $this->leaveFight();
                 }
         }
@@ -257,11 +257,11 @@ class FightMode extends Game
             if($type === 'buff') {
                 $currentStats[$stat->getName()] = $currentStats[$stat->getName()] + $stat->getValue();
 
-                echo $this->currentTarget->getName() . " took a buff of " . $stat->getValue() . " points, to the stat: " . $stat->getName() . "\n";
+                echo $this->currentTarget->getName() . " took a buff of +" . $stat->getValue() . " " . $stat->getName() . " points\n";
             } else {
 
                 $currentStats[$stat->getName()] = $currentStats[$stat->getName()] - $stat->getValue();
-                echo $this->currentTarget->getName() . " took a debuff of " . $stat->getValue() . " points, to the stat: " . $stat->getName() . "\n";
+                echo $this->currentTarget->getName() . " took a debuff of -" . $stat->getValue() . " " . $stat->getName() . " points\n";
 
                 if ($currentStats[$stat->getName()] <= 0) {
                     $currentStats[$stat->getName()] = 1;
@@ -336,7 +336,7 @@ class FightMode extends Game
 
         foreach($this->playersOut as $player) {
             if ($player->getTemporaryStats()['hpToSave'] === 0) {
-                // remove player don't work foreignKey errors currentyl going to set to 1 instead of 0 the player hp
+                // remove player don't work foreignKey errors currently going to set to 1 instead of 0 the player hp
                 // $this->em->remove($player);
             } else {
                 $stats = $player->getStats();
@@ -390,7 +390,7 @@ class FightMode extends Game
 
     private function skillsActionCheck()
     {
-        echo "IN skillsAction CHECK \n";
+        echo "In skillsAction CHECK \n";
 
         return true;
     }

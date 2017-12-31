@@ -134,7 +134,7 @@ class RegularMode extends Game
 			$this->em->flush();
 		}
 
-		echo "Item " . $itemName . " added to your inventory! \n";
+		echo "Item " . $itemName . " has been added to your inventory! \n";
 
 		// remove item from place
 		$itemLocations = $player->getLocation()->getItemLocations();
@@ -191,7 +191,7 @@ class RegularMode extends Game
                 $this->em->flush();
             }
         }
-        echo "Item " . $itemName . " has been droped from your inventory! \n";
+        echo "Item " . $itemName . " has been dropped from your inventory! \n";
 
         // add item in location
         if (in_array($item, $itemUtils->getItemsInArea($player->getLocation()))) {
@@ -340,7 +340,7 @@ class RegularMode extends Game
 		$npcName = str_replace('_', ' ', trim($this->args[2]));
 
 		$npc = $this->em->find('RPGManager\Entity\Npc', $npcUtils->getNpcId($npcName, $this->em));
-		echo $npc->getDialog() . "\n";
+		echo "\n" . $npc->getName() . ": \"" .$npc->getDialog() . "\" \n";
 	}
 
     private function caracActionCheck($args)
