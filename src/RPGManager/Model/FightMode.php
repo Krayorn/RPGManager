@@ -7,6 +7,9 @@ class FightMode extends Game
     private $players;
     private $foes;
     private $fighters;
+    private $deadFoes;
+    private $playersOut = [];
+    private $location;
     private $basicActions = ['flee', 'skills', 'inventory'];
     private $currentFighter;
     private $currentTarget;
@@ -17,6 +20,7 @@ class FightMode extends Game
         $this->players = $players;
         $this->foes = $foes;
         $this->setEntityManager($entityManager);
+        $this->location = $players[0]->getLocation();
 
         $this->fillTemporaryStatsArray();
     }
@@ -24,18 +28,38 @@ class FightMode extends Game
     private function fillTemporaryStatsArray()
     {
         foreach ($this->players as $player) {
+            $playerInventory= $player->getCharacterInventories();
             $temporaryStats = [];
             foreach($player->getStats() as $stat){
                 $temporaryStats[$stat->getStat()->getName()] = $stat->getStat()->getValue();
+
+                if($stat->getStat()->getName() == $this::$settings['statForHealth']) {
+                    $temporaryStats['hpToSave'] = $stat->getStat()->getValue();
+                }
             }
+
+            foreach ($playerInventory as $item) {
+                foreach ($item->getItem()->getItemStats() as $stat) {
+                    $temporaryStats[$stat->getStat()->getName()] =  $temporaryStats[$stat->getStat()->getName()] + $stat->getStat()->getValue();
+                }
+            }
+
             $player->setTemporaryStats($temporaryStats);
         }
 
         foreach ($this->foes as $foe) {
+            $monsterInventory= $foe->getMonsterInventories();
             $temporaryStats = [];
             foreach($foe->getStats() as $stat){
                 $temporaryStats[$stat->getStat()->getName()] = $stat->getStat()->getValue();
             }
+
+            foreach ($monsterInventory as $item) {
+                foreach ($item->getItem()->getItemStats() as $stat) {
+                    $temporaryStats[$stat->getStat()->getName()] =  $temporaryStats[$stat->getStat()->getName()] + $stat->getStat()->getValue();
+                }
+            }
+
             $foe->setTemporaryStats($temporaryStats);
         }
     }
@@ -178,10 +202,22 @@ class FightMode extends Game
         if ($this->currentTarget->getTemporaryStats()[$statToMinus] <= 0) {
 
             if(in_array($this->currentTarget, $this->players)) {
+
+                $statToSave = $this->currentTarget->getTemporaryStats();
+                $statToSave['hpToSave'] = 0;
+                $this->currentTarget->setTemporaryStats($statToSave);
+
+                array_push($this->playersOut, $this->currentTarget);
+
                 unset($this->players[array_search($this->currentTarget, $this->players)]);
                 $this->players = array_values($this->players);
-
             } else {
+                if (isset($this->deadFoes[$this->foes[array_search($this->currentTarget, $this->foes)]->getId()])) {
+                    $this->deadFoes[$this->foes[array_search($this->currentTarget, $this->foes)]->getId()] += 1;
+                } else {
+                    $this->deadFoes[$this->foes[array_search($this->currentTarget, $this->foes)]->getId()] = 1;
+                }
+
                 unset($this->foes[array_search($this->currentTarget, $this->foes)]);
                 $this->foes = array_values($this->foes);
             }
@@ -191,11 +227,11 @@ class FightMode extends Game
 
                 if(count($this->foes) === 0) {
                     echo "\nAll foes have been defeated\n";
-                    RegularMode::startGame($this->em, $this::$settings);
+                    $this->leaveFight();
                 }
                 if(count($this->players) === 0) {
                     echo "\nAll players have been defeated\n";
-                    RegularMode::startGame($this->em, $this::$settings);
+                    $this->leaveFight();
                 }
         }
     }
@@ -282,6 +318,50 @@ class FightMode extends Game
         return false;
     }
 
+    private function leaveFight()
+    {
+
+        $monstersLocation = $this->location->getMonsterLocations();
+        foreach ($monstersLocation as $monsterLocation) {
+            $monsterId = $monsterLocation->getMonster()->getId();
+            if (isset($this->deadFoes[$monsterId])) {
+                if ($this->deadFoes[$monsterId] == $monsterLocation->getNumber()) {
+                    $this->em->remove($monsterLocation);
+                } else {
+                    $monsterLocation->setNumber($monsterLocation->getNumber() - $this->deadFoes[$monsterId]);
+                    $this->em->persist($monsterLocation);
+                }
+            }
+        }
+
+        foreach($this->playersOut as $player) {
+            if ($player->getTemporaryStats()['hpToSave'] === 0) {
+                $this->em->remove($player);
+            } else {
+                $stats = $player->getStats();
+                foreach($stats as $stat) {
+                    if ($stat->getStat()->getName() == $this::$settings['statForHealth']){
+
+                        $newStat = $this->em->createQueryBuilder()
+                        ->select('stat')
+                        ->from('RPGManager\Entity\Stat', 'stat')
+                        ->where('stat.value = :value AND stat.name = :name')
+                        ->setParameters(['value' => $player->getTemporaryStats()['hpToSave'], 'name' => $this::$settings['statForHealth']])
+                        ->getQuery()
+                        ->getSingleResult();
+
+                        $stat->setStat($newStat);
+                    }
+                }
+                $this->em->persist($player);
+            }
+        }
+
+        $this->em->flush();
+
+        RegularMode::startGame($this->em, $this::$settings);
+    }
+
     private function fleeActionCheck($args)
     {
         return true;
@@ -289,13 +369,21 @@ class FightMode extends Game
 
     private function fleeAction()
     {
+        $statToSave = $this->currentFighter->getTemporaryStats();
+        if ($statToSave[$this::$settings['statForHealth']] < $statToSave['hpToSave']) {
+            $statToSave['hpToSave'] = $statToSave[$this::$settings['statForHealth']];
+        }
+        $this->currentFighter->setTemporaryStats($statToSave);
+
+        array_push($this->playersOut, $this->currentFighter);
+
         unset($this->fighters[array_search($this->currentFighter, $this->fighters)]);
         unset($this->players[array_search($this->currentFighter, $this->players)]);
 
         $this->players = array_values($this->players);
 
         if(count($this->players) === 0) {
-            RegularMode::startGame($this->em, $this::$settings);
+            $this->leaveFight();
         }
     }
 
