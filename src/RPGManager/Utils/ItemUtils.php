@@ -25,7 +25,7 @@ class ItemUtils
 		$template->writeRequestLog(__METHOD__, microtime(true ) - $msc);
 		
 		if (empty($result) || null == $result) {
-			$this->writeErrorLog(__METHOD__ . '|| The item ' . $itemName . ' does not exist.');
+			$template->writeErrorLog(__METHOD__ . '|| The item ' . $itemName . ' does not exist.');
 			echo "This item does not exist. \n";
 			return false;
 		}

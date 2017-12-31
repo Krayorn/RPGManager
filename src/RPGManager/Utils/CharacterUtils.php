@@ -25,7 +25,7 @@ class CharacterUtils
 		$template->writeRequestLog(__METHOD__, microtime(true ) - $msc);
 		
 		if (empty($result) || null == $result) {
-			$this->writeErrorLog(__METHOD__ . '|| The player ' . $currentPlayer . ' does not exist.');
+			$template->writeErrorLog(__METHOD__ . '|| The player ' . $currentPlayer . ' does not exist.');
 			echo "This player does not exist.\n";
 			return false;
 		}
