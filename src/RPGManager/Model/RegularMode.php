@@ -72,7 +72,9 @@ class RegularMode extends Game
 	protected function isValidAction($actionName, $args)
 	{
 		$this->writeAccessLog(__METHOD__);
-
+        if(!isset($args[1])) {
+            return false;
+        }
 		if (strtolower(trim($args[1])) === strtolower($actionName) || trim($args[1]) === substr($actionName, 0, 1)) {
 			if (call_user_func([$this, $actionName . 'ActionCheck'], $args)) {
 				$this->writeAccessLog(__CLASS__ . '::' . $actionName . 'ActionCheck');
@@ -102,6 +104,8 @@ class RegularMode extends Game
 
 	    $characterUtils = new CharacterUtils();
 	    $player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
+        $this->em->refresh($item);
+        $this->em->refresh($player->getLocation());
 
 	    if (!in_array($item, $itemUtils->getItemsInArea($player->getLocation()))) {
 		    $this->writeErrorLog(__METHOD__ . '|| The item ' . $itemName . ' is not accessible.');
@@ -116,13 +120,13 @@ class RegularMode extends Game
 	{
 		$characterUtils = new CharacterUtils();
 		$player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
-
+        $this->em->refresh($player);
 		$itemUtils = new ItemUtils();
 		$itemName = str_replace('_', ' ', trim($this->args[2]));
 		$item = $this->em->find('RPGManager\Entity\Item', $itemUtils->getItemId($itemName, $this->em));
 
 		// add item in player inventory
-		if ($itemUtils->isItemInInventory($item->getId(), $this->em)) {
+		if ($itemUtils->isItemInInventory($item->getId(), $player->getId(), $this->em)) {
 			$inventories = $player->getCharacterInventories();
 			foreach ($inventories as $inventory) {
 				if ($inventory->getItem()->getId() == $item->getId()) {
@@ -168,14 +172,19 @@ class RegularMode extends Game
 
         $itemUtils = new ItemUtils();
         $itemName = str_replace('_', ' ', trim($this->args[2]));
+
+        if(!$itemUtils->isItemExist($itemName, $this->em)) {
+            return false;
+        }
+
+        $characterUtils = new CharacterUtils();
         $item = $this->em->find('RPGManager\Entity\Item', $itemUtils->getItemId($itemName, $this->em));
-        
-        if (!$itemUtils->isItemInInventory($item, $this->em)) {
+        if (!$itemUtils->isItemInInventory($item, $characterUtils->getPlayerId($this->currentPlayer, $this->em), $this->em)) {
 	        $this->writeErrorLog(__METHOD__ . '|| The item ' . $itemName . ' is not in your inventory.');
             echo "This item is not in your inventory\n";
             return false;
         }
-        
+
         return true;
     }
 
@@ -202,7 +211,7 @@ class RegularMode extends Game
                 $this->em->flush();
             }
         }
-        
+
         echo "Item " . $itemName . " has been dropped from your inventory! \n";
 
         // add item in location
@@ -338,7 +347,8 @@ class RegularMode extends Game
 	    $itemUtils->displayItems($location);
     }
 
-	private function speakActionCheck($args) {
+    private function speakActionCheck($args)
+    {
 		if (!isset($args[2]) || trim($args[2]) == '') {
 			$this->writeErrorLog(__METHOD__ . '|| You haven\'t precised with who you wish to speak!');
 			echo "You haven't precised with who you wish to speak!\n";
@@ -364,7 +374,8 @@ class RegularMode extends Game
 		return true;
 	}
 
-	private function speakAction() {
+    private function speakAction()
+    {
 		$npcUtils = new NpcUtils();
 		$npcName = str_replace('_', ' ', trim($this->args[2]));
 

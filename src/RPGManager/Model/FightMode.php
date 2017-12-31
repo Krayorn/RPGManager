@@ -2,6 +2,9 @@
 
 namespace RPGManager\Model;
 
+use RPGManager\Utils\ItemUtils;
+use RPGManager\Entity\ItemLocation;
+
 class FightMode extends Game
 {
     private $players;
@@ -188,7 +191,7 @@ class FightMode extends Game
 
         if (!$actionDone) {
 	        $this->writeErrorLog(__METHOD__ . '|| Unrecognized action.');
-            echo "We don't know what you just did, plz use something that make sense you moron \n";
+            echo "We haven't understand the action you did, please try again or use the help command\n";
             $this->resolvePlayerTurn();
         }
 
@@ -344,9 +347,33 @@ class FightMode extends Game
 	    $this->writeAccessLog(__METHOD__);
 
         $monstersLocation = $this->location->getMonsterLocations();
+        $itemUtils = new ItemUtils();
+        $itemsInArea = $itemUtils->getItemsInArea($this->location);
+
         foreach ($monstersLocation as $monsterLocation) {
             $monsterId = $monsterLocation->getMonster()->getId();
             if (isset($this->deadFoes[$monsterId])) {
+                foreach($monsterLocation->getMonster()->getMonsterInventories() as $inventory) {
+
+                    if (in_array($inventory->getItem(), $itemsInArea)) {
+                        foreach ($this->location->getItemLocations() as $location) {
+                            if ($location->getItem()->getId() == $inventory->getItem()->getId()) {
+                                $location->setNumber($location->getNumber() + $inventory->getNumber() * $this->deadFoes[$monsterId]);
+                                $this->em->persist($location);
+                            }
+                        }
+                    } else {
+                        $locationName = $this->location->getName();
+                        $itemName = $inventory->getItem()->getName();
+                        $ItemLocation[$locationName . '_' . $itemName] = new ItemLocation();
+                        $ItemLocation[$locationName . '_' . $itemName]->setPlace($this->location);
+                        $ItemLocation[$locationName . '_' . $itemName]->setItem($inventory->getItem());
+                        $ItemLocation[$locationName . '_' . $itemName]->setNumber($inventory->getNumber() * $this->deadFoes[$monsterId]);
+
+                        $this->em->persist($ItemLocation[$locationName . '_' . $itemName]);
+                    }
+                }
+
                 if ($this->deadFoes[$monsterId] == $monsterLocation->getNumber()) {
                     $this->em->remove($monsterLocation);
                 } else {
