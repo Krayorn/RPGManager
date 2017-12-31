@@ -42,7 +42,7 @@ class FightMode extends Game
 
             foreach ($playerInventory as $item) {
                 foreach ($item->getItem()->getItemStats() as $stat) {
-                    $temporaryStats[$stat->getStat()->getName()] =  $temporaryStats[$stat->getStat()->getName()] + $stat->getStat()->getValue();
+                    $temporaryStats[$stat->getStat()->getName()] =  $temporaryStats[$stat->getStat()->getName()] + $stat->getStat()->getValue()  * $item->getNumber();
                 }
             }
 
@@ -58,7 +58,7 @@ class FightMode extends Game
 
             foreach ($monsterInventory as $item) {
                 foreach ($item->getItem()->getItemStats() as $stat) {
-                    $temporaryStats[$stat->getStat()->getName()] =  $temporaryStats[$stat->getStat()->getName()] + $stat->getStat()->getValue();
+                    $temporaryStats[$stat->getStat()->getName()] =  $temporaryStats[$stat->getStat()->getName()] + $stat->getStat()->getValue() * $item->getNumber();
                 }
             }
 

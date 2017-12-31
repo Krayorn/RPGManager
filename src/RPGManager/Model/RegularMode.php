@@ -26,7 +26,7 @@ class RegularMode extends Game
     {
         $game = RegularMode::getInstance();
 	    $game::$settings = $settings;
-	
+
 	    $game->writeAccessLog(__METHOD__);
         $game->setEntityManager($entityManager);
 
@@ -49,7 +49,7 @@ class RegularMode extends Game
     private function executePlayerAction($args, $availableActions)
     {
         $this->writeAccessLog(__METHOD__);
-        
+
         $this->currentPlayer = trim($args[0]);
         $characterUtils = new CharacterUtils();
 
@@ -61,7 +61,7 @@ class RegularMode extends Game
                     } else {
                         $this->writeActionLog($this->currentPlayer . " " . trim($args[1]));
                     }
-                    
+
                     $this->writeAccessLog(__CLASS__ . '::' . $value . 'Action');
                     call_user_func([$this, $value . 'Action']);
                 }
@@ -72,7 +72,7 @@ class RegularMode extends Game
 	protected function isValidAction($actionName, $args)
 	{
 		$this->writeAccessLog(__METHOD__);
-		
+
 		if (strtolower(trim($args[1])) === strtolower($actionName) || trim($args[1]) === substr($actionName, 0, 1)) {
 			if (call_user_func([$this, $actionName . 'ActionCheck'], $args)) {
 				$this->writeAccessLog(__CLASS__ . '::' . $actionName . 'ActionCheck');
@@ -366,9 +366,9 @@ class RegularMode extends Game
         foreach ($playerInventory as $item) {
             foreach ($item->getItem()->getItemStats() as $stat) {
                 if (!isset($statList[$stat->getStat()->getName()])) {
-                    $statList[$stat->getStat()->getName()] = $stat->getStat()->getValue();
+                    $statList[$stat->getStat()->getName()] = $stat->getStat()->getValue() * $item->getNumber();
                 } else {
-                    $statList[$stat->getStat()->getName()] += $stat->getStat()->getValue();
+                    $statList[$stat->getStat()->getName()] += $stat->getStat()->getValue() * $item->getNumber();
                 }
             }
         }
