@@ -187,6 +187,7 @@ class FightMode extends Game
         }
 
         if (!$actionDone) {
+	        $this->writeErrorLog(__METHOD__ . '|| Unrecognized action.');
             echo "We don't know what you just did, plz use something that make sense you moron \n";
             $this->resolvePlayerTurn();
         }

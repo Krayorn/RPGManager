@@ -46,6 +46,7 @@ class NpcUtils
 		$template->writeRequestLog(__METHOD__, microtime(true ) - $msc);
 		
 		if (empty($result) || null == $result) {
+			$template->writeErrorLog(__METHOD__ . '|| The npc ' . $npcName . ' does not exist.');
 			echo "This npc does not exist. \n";
 			return false;
 		}
