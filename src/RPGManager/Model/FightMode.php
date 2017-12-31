@@ -10,7 +10,7 @@ class FightMode extends Game
     private $deadFoes;
     private $playersOut = [];
     private $location;
-    private $basicActions = ['flee', 'skills', 'inventory'];
+    private $basicActions = ['flee', 'skills', 'inventory', 'help'];
     private $currentFighter;
     private $currentTarget;
     private $currentSpell;
@@ -169,7 +169,7 @@ class FightMode extends Game
                 $this->writeAccessLog(__CLASS__ . '::' . $value . 'Action');
                 call_user_func([$this, $value . 'Action']);
 
-                if (in_array($value, ['skills', 'inventory'])) {
+                if (in_array($value, ['skills', 'inventory', 'help'])) {
                     $this->resolvePlayerTurn();
                 }
             }
@@ -294,7 +294,7 @@ class FightMode extends Game
 	    $this->writeAccessLog(__METHOD__);
 
         if (strtolower(trim($args[0])) === strtolower($actionName) || trim($args[0]) === substr($actionName, 0, 1)) {
-            if (call_user_func([$this, $actionName . 'ActionCheck()'], $args)) {
+            if (call_user_func([$this, $actionName . 'ActionCheck'], $args)) {
                 $this->writeAccessLog(__CLASS__ . '::' . $actionName . 'ActionCheck');
                 return true;
             }
@@ -410,8 +410,6 @@ class FightMode extends Game
 
     private function skillsActionCheck()
     {
-        echo "In skillsAction CHECK \n";
-
         return true;
     }
 
@@ -421,6 +419,16 @@ class FightMode extends Game
         foreach ($spells as $spell) {
             echo $spell->getSpell()->getName() . ": " . $spell->getSpell()->getDescription() . "\n";
         }
+    }
+
+    private function helpActionCheck()
+    {
+        return true;
+    }
+
+    private function helpAction()
+    {
+        echo "You are currently in a fight, when your turn start, just write the action you want to execute, it can be a basic action or a spell (make sur to replace space with _). If it's a spell don't forget to precise the target of the spell after the call. \nIt'll probably look like \" one_spell one_target \" \n";
     }
 
     private function displayFightState()

@@ -12,7 +12,7 @@ use RPGManager\Utils\NpcUtils;
 class RegularMode extends Game
 {
     private static $instance = null;
-    protected $basicActions = ['location', 'inventory', 'carac', 'speak', 'move', 'take', 'drop', 'attack'];
+    protected $basicActions = ['location', 'inventory', 'carac', 'speak', 'move', 'take', 'drop', 'attack', 'help'];
 
     private static function getInstance()
     {
@@ -289,6 +289,16 @@ class RegularMode extends Game
 
 	    $fight = new FightMode($characterUtils->getCharactersInArea($location), $monsterUtils->getFoes($location), $this->em);
         $fight->startFight();
+    }
+
+    private function helpActionCheck()
+    {
+        return true;
+    }
+
+    private function helpAction()
+    {
+        echo "You are currently in the exploration mode, there is no turn every player can make any action, to execute an action, be sure to first write the name of your character, then the name of the basic action you want to execute, and finally the target of your action if you want to drop or take an item for example \nDon't forget that you are allowed to only use the first letter of an action.\n The command'll probably look like this : \" some_player take some_item \" ";
     }
 
     protected function locationActionCheck($args)
