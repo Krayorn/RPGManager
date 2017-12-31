@@ -2,10 +2,15 @@
 
 namespace RPGManager\Utils;
 
+use RPGManager\Template;
+
 class MonsterUtils
 {
 	public function displayMonsters($location)
 	{
+		$template = new Template();
+		$template->writeAccessLog(__METHOD__);
+		
 		$monsters = $this->getMonstersInArea($location);
 		$numberOfMonsters = $this->getNumbersOfMonstersInArea($location);
 		
@@ -24,6 +29,9 @@ class MonsterUtils
 	
 	public function getMonstersInArea($location)
 	{
+		$template = new Template();
+		$template->writeAccessLog(__METHOD__);
+		
 		$monsters = [];
 		foreach ($location->getMonsterLocations() as $monsterLocation) {
 			array_push($monsters, $monsterLocation->getMonster());
@@ -34,6 +42,9 @@ class MonsterUtils
 	
 	public function getNumbersOfMonstersInArea($location)
 	{
+		$template = new Template();
+		$template->writeAccessLog(__METHOD__);
+		
 		$numberOfMonsters = [];
 		foreach ($location->getMonsterLocations() as $monsterLocation) {
 			array_push($numberOfMonsters, $monsterLocation->getNumber());
@@ -44,6 +55,9 @@ class MonsterUtils
 	
 	public function getFoes($location)
 	{
+		$template = new Template();
+		$template->writeAccessLog(__METHOD__);
+		
 		$monsters = $this->getMonstersInArea($location);
 		$numberOfMonsters = $this->getNumbersOfMonstersInArea($location);
 		$foes = [];
@@ -59,7 +73,7 @@ class MonsterUtils
 				}
 				array_push($foes, $foe);
 			}
-			$c++;
+			$c ++;
 		}
 		
 		return $foes;

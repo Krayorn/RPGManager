@@ -2,41 +2,47 @@
 
 namespace RPGManager;
 
-abstract class Template
+class Template
 {
-    protected function getDate(){
+    public function getDate()
+    {
         $date = date("d-m-Y");
         $heure = date("H:i");
         return $date . " " . $heure;
     }
 
-    protected function writeActionLogs($file, $text, $time = 0){
+    public function writeActionLogs($file, $text)
+    {
         $date = $this->getDate();
         $line = $date . " => " . $text . "\n";
 
         $filename = 'logs/' . $file;
-        if (!is_dir(dirname($filename)))
-        {
+        if (!is_dir(dirname($filename))) {
             mkdir(dirname($filename), 0755, true);
         }
+        
         $file_log = fopen($filename, 'a');
         fwrite($file_log, $line);
         fclose($file_log);
     }
 
-    protected function writeAccessLog($log, $time = 0) {
-        $this->writeActionLogs('access.log', $log, $time);
+    public function writeAccessLog($log)
+    {
+        $this->writeActionLogs('access.log', $log);
     }
 
-    protected function writeErrorLog($log) {
+    public function writeErrorLog($log)
+    {
         $this->writeActionLogs('error.log', $log);
     }
 
-    protected function writeActionLog($log) {
+    public function writeActionLog($log)
+    {
         $this->writeActionLogs('action.log', $log);
     }
 
-    protected function writeRequestLog($log) {
+    public function writeRequestLog($log, $time = 0)
+    {
         $log .= " || => " . number_format($time * 1000, 2) . " ms";
         $this->writeActionLogs('request.log', $log);
     }

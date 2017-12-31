@@ -14,16 +14,22 @@ abstract class Game extends Template
 
     protected function setArgs($args)
     {
+	    $this->writeAccessLog(__METHOD__);
+	    
         $this->args = $args;
     }
 
     protected function setEntityManager($entityManager)
     {
+	    $this->writeAccessLog(__METHOD__);
+	    
         $this->em = $entityManager;
     }
 
     protected function getPlayerLocationId()
     {
+	    $this->writeAccessLog(__METHOD__);
+	    
         $player = $this->em->find('RPGManager\Entity\Character', $this->getPlayerId());
         $playerLocationId = $player->getLocation()->getId();
 
@@ -32,11 +38,15 @@ abstract class Game extends Template
 
 	protected function inventoryActionCheck()
 	{
+		$this->writeAccessLog(__METHOD__);
+		
 		return true;
 	}
 
 	protected function inventoryAction()
 	{
+		$this->writeAccessLog(__METHOD__);
+		
 		$characterUtils = new CharacterUtils();
 		$player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
 		$playerInventory = $player->getCharacterInventories();

@@ -2,10 +2,15 @@
 
 namespace RPGManager\Utils;
 
+use RPGManager\Template;
+
 class ItemUtils
 {
 	public function isItemExist($itemName, $em)
 	{
+		$template = new Template();
+		$template->writeAccessLog(__METHOD__);
+		
 		$result = $em->createQueryBuilder()
 			->select('item.name')
 			->from('RPGManager\Entity\Item', 'item')
@@ -25,6 +30,9 @@ class ItemUtils
 	
 	public function isItemInInventory($itemId, $em)
 	{
+		$template = new Template();
+		$template->writeAccessLog(__METHOD__);
+		
 		$result = $em->createQueryBuilder()
 			->select('item')
 			->from('RPGManager\Entity\Item', 'item')
@@ -44,19 +52,26 @@ class ItemUtils
 	
 	public function getItemId($itemName, $em)
 	{
+		$template = new Template();
+		$template->writeAccessLog(__METHOD__);
+		
 		$itemId = $em->createQueryBuilder()
 			->select('item.id')
 			->from('RPGManager\Entity\Item', 'item')
 			->where('item.name = :name')
 			->setParameter('name', $itemName)
 			->getQuery()
-			->getResult();
+			->getResult()
+		;
 		
 		return $itemId[0]['id'];
 	}
 	
 	public function displayItems($location)
 	{
+		$template = new Template();
+		$template->writeAccessLog(__METHOD__);
+		
 		$items = $this->getItemsInArea($location);
 		
 		if (empty($items)) {
@@ -77,6 +92,9 @@ class ItemUtils
 	
 	public function getItemsInArea($location)
 	{
+		$template = new Template();
+		$template->writeAccessLog(__METHOD__);
+		
 		$itemLocations = $location->getItemLocations();
 		$items = [];
 		
@@ -89,6 +107,9 @@ class ItemUtils
 	
 	public function getNumbersOfItemsInArea($location)
 	{
+		$template = new Template();
+		$template->writeAccessLog(__METHOD__);
+		
 		$itemLocations = $location->getItemLocations();
 		$numberOfItems = [];
 		
