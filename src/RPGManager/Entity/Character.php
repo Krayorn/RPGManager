@@ -31,17 +31,17 @@ class Character
     private $description;
 
     /**
-     * @OneToMany(targetEntity="CharacterInventory", mappedBy="character", cascade={"persist"})
+     * @OneToMany(targetEntity="CharacterInventory", mappedBy="character", cascade={"remove"})
      */
     private $characterInventories;
 
     /**
-     * @OneToMany(targetEntity="CharacterStat", mappedBy="character", cascade={"persist"})
+     * @OneToMany(targetEntity="CharacterStat", mappedBy="character", cascade={"remove"})
      */
     private $characterStats;
 
     /**
-     * @OneToMany(targetEntity="CharacterSpell", mappedBy="character", cascade={"persist"})
+     * @OneToMany(targetEntity="CharacterSpell", mappedBy="character", cascade={"remove"})
      */
     private $characterSpells;
 

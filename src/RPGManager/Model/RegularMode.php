@@ -299,6 +299,8 @@ class RegularMode extends Game
         echo "\n" . $player->getLocation()->getName() . ': ' . $player->getLocation()->getDescription() . "\n\n";
 
         $location = $player->getLocation();
+        $this->em->refresh($location);
+
         $this->displayDirections();
 
         $monsterUtils = new MonsterUtils();
@@ -352,7 +354,7 @@ class RegularMode extends Game
     {
 	    $characterUtils = new CharacterUtils();
 	    $player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
-
+        $this->em->refresh($player);
         $playerStats = $player->getStats();
         $playerInventory= $player->getCharacterInventories();
         $statList = [];

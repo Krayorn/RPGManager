@@ -39,6 +39,7 @@ abstract class Game extends Template
 	{
 		$characterUtils = new CharacterUtils();
 		$player = $this->em->find('RPGManager\Entity\Character', $characterUtils->getPlayerId($this->currentPlayer, $this->em));
+        $this->em->refresh($player);
 		$playerInventory = $player->getCharacterInventories();
 
 		if (empty($playerInventory)) {
