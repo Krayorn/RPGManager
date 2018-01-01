@@ -209,8 +209,8 @@ class FightMode extends Game
 
             $stats = $this->currentTarget->getTemporaryStats();
 
-            $stats[$statToMinus] = $stats[$statToMinus] - $damage->getValue();
-            echo $this->currentTarget->getName() . " took " . $damage->getValue() . " " . $damage->getName() . "\n";
+            $stats[$statToMinus] = $stats[$statToMinus] - $this->getSpellValue($damage->getValue());
+            echo $this->currentTarget->getName() . " took " . $this->getSpellValue($damage->getValue()) . " " . $damage->getName() . "\n";
         }
         $this->currentTarget->setTemporaryStats($stats);
 
@@ -275,13 +275,13 @@ class FightMode extends Game
         foreach($statsToUpdate as $stat) {
             $stat = $stat->getStat();
             if($type === 'buff') {
-                $currentStats[$stat->getName()] = $currentStats[$stat->getName()] + $stat->getValue();
+                $currentStats[$stat->getName()] = $currentStats[$stat->getName()] + $this->getSpellValue($stat->getValue());
 
-                echo $this->currentTarget->getName() . " took a buff of +" . $stat->getValue() . " " . $stat->getName() . " points\n";
+                echo $this->currentTarget->getName() . " took a buff of +" . $this->getSpellValue($stat->getValue()) . " " . $stat->getName() . " points\n";
             } else {
 
-                $currentStats[$stat->getName()] = $currentStats[$stat->getName()] - $stat->getValue();
-                echo $this->currentTarget->getName() . " took a debuff of -" . $stat->getValue() . " " . $stat->getName() . " points\n";
+                $currentStats[$stat->getName()] = $currentStats[$stat->getName()] - $this->getSpellValue($stat->getValue());
+                echo $this->currentTarget->getName() . " took a debuff of -" . $this->getSpellValue($stat->getValue()) . " " . $stat->getName() . " points\n";
 
                 if ($currentStats[$stat->getName()] <= 0) {
                     $currentStats[$stat->getName()] = 1;
@@ -291,6 +291,15 @@ class FightMode extends Game
         }
 
         $this->currentTarget->setTemporaryStats($currentStats);
+    }
+
+    private function getSpellValue($spellValue)
+    {
+        if(is_int($spellValue)){
+            return $spellValue;
+        } else {
+            return $this->currentFighter->getTemporaryStats()[$spellValue];
+        }
     }
 
     private function isValidAction($actionName, $args)

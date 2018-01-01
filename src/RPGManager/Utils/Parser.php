@@ -51,6 +51,13 @@ class Parser extends Template {
         $statsEntities = [];
 
         foreach ($stats as $key => $stat) {
+                $statsEntities[$stat['name'] . '_' . $stat['name']] =  new Stat();
+                $statsEntities[$stat['name'] . '_' . $stat['name']]->setName($stat['name']);
+                $statsEntities[$stat['name'] . '_' . $stat['name']]->setValue($stat['name']);
+                // TODO: condition for checking description exists
+                $statsEntities[$stat['name'] . '_' . $stat['name']]->setDescription($stat['description']);
+
+                $entityManager->persist($statsEntities[$stat['name'] . '_' . $stat['name']]);
             for ($i = $stat["range"][0]; $i <= $stat["range"][1]; $i ++) {
                 $statsEntities[$stat['name'] . '_' . $i] =  new Stat();
                 $statsEntities[$stat['name'] . '_' . $i]->setName($stat['name']);
@@ -93,7 +100,11 @@ class Parser extends Template {
             foreach ($spell['stats'] as $stat) {
                 $spellsStatsTable[$spell['name'] . '_' . $stat['name']] = new SpellStat();
                 $spellsStatsTable[$spell['name'] . '_' . $stat['name']]->setSpell($spellsEntities[$spell['name']]);
-                $spellsStatsTable[$spell['name'] . '_' . $stat['name']]->setStat($statsEntities[$stat['name'] . '_' . $stat['value']]);
+                if(is_int($stat['value'])) {
+                    $spellsStatsTable[$spell['name'] . '_' . $stat['name']]->setStat($statsEntities[$stat['name'] . '_' . $stat['value']]);
+                } else {
+                    $spellsStatsTable[$spell['name'] . '_' . $stat['name']]->setStat($statsEntities[$stat['value'] . '_' . $stat['value']]);
+                }
 
                 $entityManager->persist($spellsStatsTable[$spell['name'] . '_' . $stat['name']]);
             }

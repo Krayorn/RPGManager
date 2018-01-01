@@ -29,8 +29,8 @@ class Stat
     private $description;
 
     /**
-     * @var int
-     * @Column(name="value", type="integer")
+     * @var string
+     * @Column(name="value", type="string")
      */
     private $value;
 
@@ -103,21 +103,24 @@ class Stat
     }
 
     /**
-     * @return int
+     * @return mixed
      */
     public function getValue()
     {
+        if(is_numeric($this->value)) {
+            return intval($this->value);
+        }
         return $this->value;
     }
 
     /**
-     * @param int $value
+     * @param string $value
      */
     public function setValue($value)
     {
         $this->value = $value;
     }
-	
+
 	/**
 	 * @return mixed
 	 */
@@ -125,7 +128,7 @@ class Stat
 	{
 		return $this->characterStats;
 	}
-	
+
 	/**
 	 * @param mixed $characterStats
 	 */
@@ -133,7 +136,7 @@ class Stat
 	{
 		$this->characterStats = $characterStats;
 	}
-	
+
 	/**
 	 * @return mixed
 	 */
@@ -141,7 +144,7 @@ class Stat
 	{
 		return $this->monsterStats;
 	}
-	
+
 	/**
 	 * @param mixed $monsterStats
 	 */
@@ -149,7 +152,7 @@ class Stat
 	{
 		$this->monsterStats = $monsterStats;
 	}
-	
+
 	/**
 	 * @return mixed
 	 */
@@ -157,7 +160,7 @@ class Stat
 	{
 		return $this->itemStats;
 	}
-	
+
 	/**
 	 * @param mixed $itemStats
 	 */
@@ -165,7 +168,7 @@ class Stat
 	{
 		$this->itemStats = $itemStats;
 	}
-	
+
 	/**
 	 * @return mixed
 	 */
@@ -173,7 +176,7 @@ class Stat
 	{
 		return $this->spellStats;
 	}
-	
+
 	/**
 	 * @param mixed $spellStats
 	 */
