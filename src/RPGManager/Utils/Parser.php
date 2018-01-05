@@ -47,7 +47,6 @@ class Parser extends Template {
         $places = $gameConfig['places'];
         $stats = $gameConfig['stats'];
         $spells = $gameConfig['spells'];
-
         $statsEntities = [];
 
         foreach ($stats as $key => $stat) {

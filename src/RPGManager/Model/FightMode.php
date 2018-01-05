@@ -204,10 +204,10 @@ class FightMode extends Game
         $damages = $this->currentSpell->getSpellStats();
         $statToMinus = $this::$settings['statForHealth'];
 
+        $stats = $this->currentTarget->getTemporaryStats();
+
         foreach($damages as $damage) {
             $damage = $damage->getStat();
-
-            $stats = $this->currentTarget->getTemporaryStats();
 
             $stats[$statToMinus] = $stats[$statToMinus] - $this->getSpellValue($damage->getValue());
             echo $this->currentTarget->getName() . " took " . $this->getSpellValue($damage->getValue()) . " " . $damage->getName() . "\n";
@@ -279,7 +279,6 @@ class FightMode extends Game
 
                 echo $this->currentTarget->getName() . " took a buff of +" . $this->getSpellValue($stat->getValue()) . " " . $stat->getName() . " points\n";
             } else {
-
                 $currentStats[$stat->getName()] = $currentStats[$stat->getName()] - $this->getSpellValue($stat->getValue());
                 echo $this->currentTarget->getName() . " took a debuff of -" . $this->getSpellValue($stat->getValue()) . " " . $stat->getName() . " points\n";
 
